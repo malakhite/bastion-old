@@ -4,13 +4,14 @@ import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
-import { Role } from '../auth/entities/role.entity';
+import { Role } from './entities/role.entity';
 
 @Injectable()
 export class UserService {
 	constructor(
 		@InjectRepository(Role)
 		private roleRepository: Repository<Role>,
+
 		@InjectRepository(User)
 		private userRepository: Repository<User>,
 	) {}

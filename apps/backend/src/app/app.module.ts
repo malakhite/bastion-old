@@ -1,21 +1,21 @@
-import { Module, OnApplicationBootstrap } from '@nestjs/common';
+import 'multer';
+import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { resolve } from 'path';
+import { AssetModule } from '../asset/asset.module';
 import { AuthModule } from '../auth/auth.module';
-import { AuthService } from '../auth/auth.service';
-
 import configuration from '../config';
-import { SeedingService } from '../seeding/seeding.service';
+import { PostModule } from '../post/post.module';
 import { UserSubscriber } from '../user/entities/user.subscriber';
 import { UserModule } from '../user/user.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { S3Service } from '../asset/s3.service';
 
 @Module({
 	controllers: [AppController],
 	imports: [
-		AuthModule,
 		ConfigModule.forRoot({
 			cache: true,
 			envFilePath: resolve(__dirname, '..', '..', '..', '.env'),
@@ -39,19 +39,11 @@ import { AppService } from './app.service';
 				subscribers: [UserSubscriber],
 			}),
 		}),
+		AssetModule,
+		AuthModule,
+		PostModule,
 		UserModule,
 	],
-	providers: [AppService, SeedingService],
+	providers: [AppService],
 })
-export class AppModule implements OnApplicationBootstrap {
-	constructor(
-		private readonly seedingService: SeedingService,
-		private readonly authService: AuthService,
-	) {}
-
-	async onApplicationBootstrap(): Promise<void> {
-		// Order is important here. seed() has to run before populateRoleData()
-		await this.seedingService.seed();
-		await this.authService.populateRoleData();
-	}
-}
+export class AppModule {}

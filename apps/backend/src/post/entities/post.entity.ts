@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-inferrable-types */
-import { Exclude } from 'class-transformer';
-import { IsBoolean, IsDate, IsEmail, IsUUID } from 'class-validator';
+import { IsDate, IsUUID } from 'class-validator';
 import {
 	Column,
 	CreateDateColumn,
@@ -10,24 +9,21 @@ import {
 	JoinColumn,
 	ManyToOne,
 	PrimaryGeneratedColumn,
-	Unique,
 	UpdateDateColumn,
 } from 'typeorm';
-import { Role } from './role.entity';
+import { Asset } from '../../asset/entities/asset.entity';
+import { User } from '../../user/entities/user.entity';
 
 @Entity({
 	orderBy: {
-		created_at: 'ASC',
-		email: 'ASC',
+		published_at: 'DESC',
 	},
 })
-@Unique(['email'])
-export class User {
+export class Post {
 	@IsUUID()
 	@PrimaryGeneratedColumn('uuid')
 	id!: string;
 
-	@IsEmail()
 	@Column({
 		type: 'varchar',
 		transformer: {
@@ -36,37 +32,38 @@ export class User {
 		},
 	})
 	@Index({ unique: true })
-	email!: string;
+	slug!: string;
 
 	@Column('varchar')
-	name!: string;
+	title!: string;
 
-	@Exclude()
-	@Column('varchar')
-	password!: string;
+	@ManyToOne(() => User, { eager: true })
+	@JoinColumn({ name: 'author_id' })
+	author!: User;
 
-	@IsBoolean()
-	@Column('boolean')
-	is_active: boolean = true;
+	@ManyToOne(() => Asset, { eager: true, nullable: true })
+	@JoinColumn({ name: 'hero_id' })
+	hero: Asset | null = null;
 
-	@ManyToOne(() => Role, { eager: true })
-	@JoinColumn({ name: 'role_id' })
-	role!: Role;
+	@Column({ type: 'text' })
+	content!: string;
+
+	@Column({ type: 'boolean' })
+	is_published: boolean = false;
 
 	@IsDate()
 	@CreateDateColumn({ type: 'timestamptz' })
 	created_at!: Date;
 
 	@IsDate()
+	@Column({ type: 'timestamptz', nullable: true })
+	published_at: Date | null = null;
+
+	@IsDate()
 	@UpdateDateColumn({ type: 'timestamptz', nullable: true })
 	updated_at: Date | null = null;
 
-	@Exclude()
 	@IsDate()
 	@DeleteDateColumn({ type: 'timestamptz', nullable: true })
 	deleted_at: Date | null = null;
-
-	constructor(partial: Partial<User>) {
-		Object.assign(this, partial);
-	}
 }

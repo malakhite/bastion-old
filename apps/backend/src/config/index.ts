@@ -14,6 +14,12 @@ export default (): ConfigObject => ({
 	jwt: {
 		secret: process.env.JWT_SECRET || 'abcd1234',
 	},
+	s3: {
+		key_id: process.env.AWS_ACCESS_KEY_ID,
+		secret_key: process.env.AWS_SECRET_ACCESS_KEY,
+		region: process.env.AWS_REGION,
+		bucket_name: process.env.S3_BUCKET_NAME,
+	},
 	seeds: {
 		roles: {
 			admin:

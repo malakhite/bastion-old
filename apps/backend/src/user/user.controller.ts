@@ -13,12 +13,12 @@ import {
 	UseGuards,
 	Req,
 } from '@nestjs/common';
+import { Request } from 'express';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { SelfGuard } from '../auth/guards/self.guard';
-import { Request } from 'express';
 
 @UseGuards(JwtAuthGuard, SelfGuard)
 @UseInterceptors(ClassSerializerInterceptor)
