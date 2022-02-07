@@ -1,29 +1,17 @@
 /* eslint-disable @typescript-eslint/no-inferrable-types */
-import { IsDate, IsUUID } from 'class-validator';
-import {
-	Column,
-	CreateDateColumn,
-	DeleteDateColumn,
-	Entity,
-	Index,
-	JoinColumn,
-	ManyToOne,
-	PrimaryGeneratedColumn,
-	UpdateDateColumn,
-} from 'typeorm';
+import { IsDate } from 'class-validator';
+import { Column, Entity, Index, JoinColumn, ManyToOne } from 'typeorm';
 import { Asset } from '../../asset/entities/asset.entity';
+import { Base } from '../../common/entities/base.entity';
 import { User } from '../../user/entities/user.entity';
 
 @Entity({
+	name: 'posts',
 	orderBy: {
 		published_at: 'DESC',
 	},
 })
-export class Post {
-	@IsUUID()
-	@PrimaryGeneratedColumn('uuid')
-	id!: string;
-
+export class Post extends Base {
 	@Column({
 		type: 'varchar',
 		transformer: {
@@ -52,18 +40,6 @@ export class Post {
 	is_published: boolean = false;
 
 	@IsDate()
-	@CreateDateColumn({ type: 'timestamptz' })
-	created_at!: Date;
-
-	@IsDate()
 	@Column({ type: 'timestamptz', nullable: true })
 	published_at: Date | null = null;
-
-	@IsDate()
-	@UpdateDateColumn({ type: 'timestamptz', nullable: true })
-	updated_at: Date | null = null;
-
-	@IsDate()
-	@DeleteDateColumn({ type: 'timestamptz', nullable: true })
-	deleted_at: Date | null = null;
 }

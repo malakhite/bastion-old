@@ -1,22 +1,10 @@
-import { Exclude } from 'class-transformer';
-import { IsDate, IsUrl } from 'class-validator';
-import {
-	Column,
-	CreateDateColumn,
-	DeleteDateColumn,
-	Entity,
-	JoinColumn,
-	ManyToOne,
-	PrimaryGeneratedColumn,
-	UpdateDateColumn,
-} from 'typeorm';
+import { IsUrl } from 'class-validator';
+import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
+import { Base } from '../../common/entities/base.entity';
 import { User } from '../../user/entities/user.entity';
 
-@Entity()
-export class Asset {
-	@PrimaryGeneratedColumn('uuid')
-	id!: string;
-
+@Entity('assets')
+export class Asset extends Base {
 	@Column('varchar')
 	key!: string;
 
@@ -36,17 +24,4 @@ export class Asset {
 	@ManyToOne(() => User, { eager: true })
 	@JoinColumn({ name: 'author_id' })
 	author!: User;
-
-	@IsDate()
-	@CreateDateColumn({ type: 'timestamptz' })
-	created_at!: Date;
-
-	@IsDate()
-	@UpdateDateColumn({ type: 'timestamptz', nullable: true })
-	updated_at: Date | null = null;
-
-	@Exclude()
-	@IsDate()
-	@DeleteDateColumn({ type: 'timestamptz', nullable: true })
-	deleted_at: Date | null = null;
 }
