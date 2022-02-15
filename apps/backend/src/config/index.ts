@@ -1,5 +1,4 @@
 import { ConfigObject } from '@nestjs/config';
-import * as faker from 'faker';
 
 export default (): ConfigObject => ({
 	host: process.env.HOST || 'localhost',
@@ -45,8 +44,8 @@ export default (): ConfigObject => ({
 				id:
 					process.env.TEST_USER_ID ||
 					'e28c4834-d1c4-4d6a-af5c-1af20f83b09d',
-				email: process.env.TEST_USER_EMAIL || faker.internet.email(),
-				name: process.env.TEST_USER_NAME || faker.name.findName(),
+				email: process.env.TEST_USER_EMAIL,
+				name: process.env.TEST_USER_NAME,
 				password:
 					process.env.TEST_USER_PASSWORD ||
 					process.env.ADMIN_USER_PASSWORD,

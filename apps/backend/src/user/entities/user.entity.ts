@@ -1,32 +1,19 @@
 /* eslint-disable @typescript-eslint/no-inferrable-types */
 import { Exclude } from 'class-transformer';
-import { IsBoolean, IsDate, IsEmail, IsUUID } from 'class-validator';
-import {
-	Column,
-	CreateDateColumn,
-	DeleteDateColumn,
-	Entity,
-	Index,
-	JoinColumn,
-	ManyToOne,
-	PrimaryGeneratedColumn,
-	Unique,
-	UpdateDateColumn,
-} from 'typeorm';
+import { IsBoolean, IsEmail } from 'class-validator';
+import { Column, Entity, Index, JoinColumn, ManyToOne, Unique } from 'typeorm';
+import { Base } from '../../common/entities/base.entity';
 import { Role } from './role.entity';
 
 @Entity({
+	name: 'users',
 	orderBy: {
 		created_at: 'ASC',
 		email: 'ASC',
 	},
 })
 @Unique(['email'])
-export class User {
-	@IsUUID()
-	@PrimaryGeneratedColumn('uuid')
-	id!: string;
-
+export class User extends Base {
 	@IsEmail()
 	@Column({
 		type: 'varchar',
@@ -53,20 +40,8 @@ export class User {
 	@JoinColumn({ name: 'role_id' })
 	role!: Role;
 
-	@IsDate()
-	@CreateDateColumn({ type: 'timestamptz' })
-	created_at!: Date;
-
-	@IsDate()
-	@UpdateDateColumn({ type: 'timestamptz', nullable: true })
-	updated_at: Date | null = null;
-
-	@Exclude()
-	@IsDate()
-	@DeleteDateColumn({ type: 'timestamptz', nullable: true })
-	deleted_at: Date | null = null;
-
 	constructor(partial: Partial<User>) {
+		super();
 		Object.assign(this, partial);
 	}
 }
