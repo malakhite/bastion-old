@@ -1,13 +1,9 @@
 import { Exclude, Transform } from 'class-transformer';
-import { IsUUID } from 'class-validator';
-import { Column, Entity, Index, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, Index } from 'typeorm';
+import { Base } from '../../common/entities/base.entity';
 
-@Entity()
-export class Role {
-	@IsUUID()
-	@PrimaryGeneratedColumn('uuid')
-	id!: string;
-
+@Entity({ name: 'roles' })
+export class Role extends Base {
 	@Transform(({ value }) => (value as string).toLowerCase().trim())
 	@Column({ type: 'varchar', update: false })
 	@Index({ unique: true })
@@ -18,6 +14,7 @@ export class Role {
 	description!: string;
 
 	constructor(role: Role) {
+		super();
 		Object.assign(this, role);
 	}
 }
