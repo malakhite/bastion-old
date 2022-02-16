@@ -1,21 +1,21 @@
 import 'multer';
+import { resolve } from 'path';
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { resolve } from 'path';
+import { LoggerModule } from 'nestjs-pino';
 import { AssetModule } from '../asset/asset.module';
 import { AuthModule } from '../auth/auth.module';
 import configuration from '../config';
 import { PostModule } from '../post/post.module';
-import { UserSubscriber } from '../user/entities/user.subscriber';
 import { UserModule } from '../user/user.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { S3Service } from '../asset/s3.service';
 
 @Module({
 	controllers: [AppController],
 	imports: [
+		LoggerModule.forRoot(),
 		ConfigModule.forRoot({
 			cache: true,
 			envFilePath: resolve(__dirname, '..', '..', '..', '.env'),
@@ -36,7 +36,6 @@ import { S3Service } from '../asset/s3.service';
 				password: configService.get('database.password'),
 				synchronize: configService.get('database.synchronize'),
 				autoLoadEntities: true,
-				subscribers: [UserSubscriber],
 			}),
 		}),
 		AssetModule,
