@@ -4,9 +4,9 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { LoggerModule } from 'nestjs-pino';
+import configuration from '../config';
 import { AssetModule } from '../asset/asset.module';
 import { AuthModule } from '../auth/auth.module';
-import configuration from '../config';
 import { PostModule } from '../post/post.module';
 import { UserModule } from '../user/user.module';
 import { AppController } from './app.controller';
@@ -15,7 +15,18 @@ import { AppService } from './app.service';
 @Module({
 	controllers: [AppController],
 	imports: [
-		LoggerModule.forRoot(),
+		LoggerModule.forRoot({
+			pinoHttp:
+				process.env.NODE_ENV === 'development'
+					? {
+							prettyPrint: {
+								colorize: true,
+								levelFirst: true,
+								translateTime: true,
+							},
+					  }
+					: {},
+		}),
 		ConfigModule.forRoot({
 			cache: true,
 			envFilePath: resolve(__dirname, '..', '..', '..', '.env'),
