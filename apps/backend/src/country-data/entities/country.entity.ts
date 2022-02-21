@@ -1,6 +1,13 @@
-import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
+import {
+	Column,
+	Entity,
+	Index,
+	JoinColumn,
+	ManyToOne,
+	OneToMany,
+} from 'typeorm';
 import { Base } from '../../common/entities/base.entity';
-import { Category } from './field.entity';
+import { Field } from './field.entity';
 import { Region } from './region.entity';
 
 @Entity({
@@ -14,6 +21,7 @@ export class Country extends Base {
 	name!: string;
 
 	@Column({ type: 'varchar', length: 2 })
+	@Index({ unique: true })
 	iso_3166_alpha_2!: string;
 
 	@Column({ type: 'varchar', length: 3 })
@@ -26,7 +34,7 @@ export class Country extends Base {
 		type: 'varchar',
 		length: 3,
 	})
-	stanag_code!: string;
+	stanag!: string;
 
 	@Column({
 		transformer: {
@@ -50,4 +58,7 @@ export class Country extends Base {
 
 	@Column({ type: 'varchar' })
 	flag_description!: string;
+
+	@OneToMany(() => Field, (field) => field.country)
+	fields!: Field[];
 }

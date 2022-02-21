@@ -1,4 +1,4 @@
-import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 import { Base } from '../../common/entities/base.entity';
 import { Country } from './country.entity';
 
@@ -20,10 +20,14 @@ export class Field extends Shared {
 	definition!: string;
 
 	@Column({ type: 'varchar' })
-	id!: string;
+	id_slug!: string;
 
 	@Column({ type: 'text' })
 	content!: string;
+
+	@ManyToOne(() => Country, (country) => country.fields)
+	@JoinColumn({ name: 'country_id' })
+	country!: Country;
 
 	@ManyToOne(() => Category)
 	@JoinColumn({ name: 'category_id' })
@@ -32,7 +36,5 @@ export class Field extends Shared {
 
 @Entity()
 export class Category extends Shared {
-	@ManyToOne(() => Country)
-	@JoinColumn({ name: 'country_id' })
-	country!: Country;
+	name!: string;
 }

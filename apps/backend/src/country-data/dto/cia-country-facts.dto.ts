@@ -23,7 +23,7 @@ class Category {
 	comparative!: boolean;
 }
 
-export class CiaCountryFactsDto {
+export class CountryDataJson {
 	name!: string;
 	code!: string;
 	region!: string;
@@ -32,4 +32,22 @@ export class CiaCountryFactsDto {
 	travel!: File;
 	media!: File[];
 	categories!: Category[];
+}
+
+export class CiaPageDataDto {
+	componentChuckName!: string;
+	path!: string;
+	result!: {
+		data: {
+			country: {
+				json: string; // Has to be JSON.parsed to yield `CountryDataJson`
+				title: string;
+				code: string;
+				path: string;
+				region: string;
+				launchpad_modified: string;
+			};
+		};
+	};
+	staticQueryHashes!: string[];
 }
