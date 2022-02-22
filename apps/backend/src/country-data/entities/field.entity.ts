@@ -1,4 +1,4 @@
-import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
 import { Base } from '../../common/entities/base.entity';
 import { Country } from './country.entity';
 
@@ -36,5 +36,6 @@ export class Field extends Shared {
 
 @Entity()
 export class Category extends Shared {
-	name!: string;
+	@OneToMany(() => Field, (field) => field.category)
+	fields!: Field[];
 }

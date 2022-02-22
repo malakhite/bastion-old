@@ -7,6 +7,7 @@ import {
 	OneToMany,
 } from 'typeorm';
 import { Base } from '../../common/entities/base.entity';
+import { CountryCodeValues } from '../interfaces/page-data';
 import { Field } from './field.entity';
 import { Region } from './region.entity';
 
@@ -19,6 +20,10 @@ import { Region } from './region.entity';
 export class Country extends Base {
 	@Column({ type: 'varchar' })
 	name!: string;
+
+	@Column({ type: 'varchar', length: 3 })
+	@Index({ unique: true })
+	fips!: string;
 
 	@Column({ type: 'varchar', length: 2 })
 	@Index({ unique: true })
@@ -61,4 +66,15 @@ export class Country extends Base {
 
 	@OneToMany(() => Field, (field) => field.country)
 	fields!: Field[];
+
+	addCountryCodeData(countryCodeData: CountryCodeValues) {
+		this.name = countryCodeData.entity;
+		this.fips = countryCodeData.gec;
+		this.iso_3166_alpha_2 = countryCodeData.iso_code_1;
+		this.iso_3166_alpha_3 = countryCodeData.iso_code_2;
+		this.iso_3166_numeric = Number.parseInt(countryCodeData.iso_code_3, 10);
+		this.stanag = countryCodeData.stanag_code;
+		this.internet_code = countryCodeData.internet_code;
+		this.code_comment = countryCodeData.comment;
+	}
 }
