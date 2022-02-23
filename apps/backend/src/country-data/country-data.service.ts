@@ -1,12 +1,15 @@
-import { Injectable, OnModuleInit } from '@nestjs/common';
+import { slugify } from '@bastion/util';
+import { HttpService } from '@nestjs/axios';
+import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { InjectRepository } from '@nestjs/typeorm';
-import axios, { AxiosInstance } from 'axios';
+import { lastValueFrom } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { Repository } from 'typeorm';
 import { Country } from './entities/country.entity';
 import { Category, Field } from './entities/field.entity';
 import { Region } from './entities/region.entity';
-import { FactbookSources, FactbookUpdate } from './entities/update.entity';
+import { FactbookUpdate } from './entities/update.entity';
 import {
 	CountryCodeData,
 	CountryCodeDataJson,
@@ -18,13 +21,11 @@ import {
 
 @Injectable()
 export class CountryDataService implements OnModuleInit {
-	countries: CountryListData['countries']['edges'] = [];
-	fetcher: AxiosInstance;
-	updates: {
-		[source in FactbookSources]?: FactbookUpdate;
-	} = {};
+	private readonly logger = new Logger(CountryDataService.name);
 
 	constructor(
+		private httpService: HttpService,
+
 		@InjectRepository(Category)
 		private categoryRepository: Repository<Category>,
 
@@ -39,141 +40,169 @@ export class CountryDataService implements OnModuleInit {
 
 		@InjectRepository(Region)
 		private regionRepository: Repository<Region>,
-	) {
-		this.fetcher = axios.create({
-			baseURL: 'https://www.cia.gov/the-world-factbook/page-data',
-			headers: {
-				accept: 'application/json',
-			},
-		});
-	}
+	) {}
 
 	async onModuleInit() {
-		await this.init();
 		await this.upsertCountries();
 	}
 
-	async init(): Promise<void> {
-		await this.fetchCountryList();
-		await this.fetchUpdateTimestamps();
-	}
-
-	async fetchUpdateTimestamps(): Promise<void> {
-		const updates = await this.updateRepository.find();
-		for (const update of updates) {
-			this.updates[update.data_source] = update;
-		}
-	}
-
-	async fetchCountryList(): Promise<void> {
-		const { data: countryListResponse } = await this.fetcher.get<
+	private async fetchCountryList(): Promise<
+		CountryListData['countries']['edges']
+	> {
+		const countryListResponse = this.httpService.get<
 			PageData<CountryListData>
 		>('/countries/page-data.json');
-		this.countries = countryListResponse.result.data.countries.edges;
+		return await lastValueFrom(
+			countryListResponse.pipe(
+				map((response) => {
+					const { data } = response;
+					return data?.result?.data?.countries?.edges;
+				}),
+			),
+		);
 	}
 
-	getLastUpdate(source: FactbookSources): Date | undefined {
-		const sourceEntry = this.updates[source];
-		return sourceEntry?.updated;
-	}
-
-	@Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT)
-	async upsertCountries() {
-		if (this.countries.length === 0) {
-			await this.init();
-		}
-
-		const { data: countryCodeResponse } = await this.fetcher.get<
+	private async fetchCountryCodes(): Promise<CountryCodeDataJson> {
+		const countryCodeResponse = this.httpService.get<
 			PageData<CountryCodeData>
 		>('/references/country-data-codes/page-data.json');
 
-		const parsedCodes: CountryCodeDataJson = JSON.parse(
-			countryCodeResponse.result.data.page.json,
+		return await lastValueFrom<CountryCodeDataJson>(
+			countryCodeResponse.pipe(
+				map((response) => {
+					const { data } = response;
+					return JSON.parse(data?.result?.data?.page?.json);
+				}),
+			),
 		);
-		const { country_codes, updated } = parsedCodes;
-		const remoteUpdated = new Date(updated);
-		const localUpdated = this.getLastUpdate(FactbookSources.COUNTRY_CODES);
-		if (localUpdated && localUpdated < remoteUpdated) {
-			const update = new FactbookUpdate();
-			update.data_source = FactbookSources.COUNTRY_CODES;
-			update.updated = remoteUpdated;
-			this.updateRepository.save(update);
-			this.updates[update.data_source] = update;
-		}
+	}
 
-		for (const country of this.countries) {
-			const url = country.node.path.replace('/the-world-fact-book', '');
-			const { data: countryDataResponse } = await this.fetcher.get<
-				PageData<CountryData>
-			>(`${url}page-data.json`);
+	private async fetchCountry(
+		country: CountryListData['countries']['edges'][number],
+	): Promise<CountryDataValues> {
+		const countryUrl = country.node.path.replace('/the-world-factbook', '');
 
-			const parsedData: CountryDataValues = JSON.parse(
-				countryDataResponse.result.data.country.json,
-			);
+		const countryDataResponse = this.httpService.get<PageData<CountryData>>(
+			`${countryUrl}page-data.json`,
+		);
+		return await lastValueFrom<CountryDataValues>(
+			countryDataResponse.pipe(
+				map(({ data }) => JSON.parse(data.result.data.country.json)),
+			),
+		);
+	}
 
-			const newCountry =
-				(await this.countryRepository.findOne({
-					fips: parsedData.code,
-				})) || new Country();
+	@Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT)
+	private async upsertCountries() {
+		try {
+			const countries = await this.fetchCountryList();
+			const { country_codes } = await this.fetchCountryCodes();
 
-			const published_at = new Date(parsedData.published);
-			if (
-				newCountry.published_at &&
-				published_at > newCountry.published_at
-			) {
-				break;
-			}
-
-			const countryCode = country_codes.find(
-				(code) => code.gec === parsedData.code,
-			);
-			if (!countryCode) {
-				throw new Error(
-					`Country codes not loaded for ${country.node.title}`,
+			for (const country of countries) {
+				const countryData = await this.fetchCountry(country);
+				const published = new Date(
+					Number.parseInt(countryData.published, 10) * 1000,
 				);
-			}
+				const existingCountry = await this.countryRepository.findOne({
+					fips: countryData.code,
+				});
 
-			newCountry.addCountryCodeData(countryCode);
+				if (
+					existingCountry &&
+					existingCountry.published_at >= published
+				) {
+					continue;
+				}
 
-			const region =
-				(await this.regionRepository.findOne({
-					name: parsedData.region,
-				})) || new Region();
-			region.name = region.name || parsedData.region;
-			newCountry.region = region;
+				const countryCodes = country_codes.find(
+					(country_code) => country_code.gec === countryData.code,
+				);
+				if (!countryCodes) {
+					throw new Error(
+						`Country codes missing for country ${country.node.title}`,
+					);
+				}
+				let newCountry = new Country();
+				newCountry.name = country.node.title;
+				newCountry.slug = slugify(country.node.title);
+				newCountry.fips = countryCodes.gec;
+				newCountry.iso_3166_alpha_2 = countryCodes.iso_code_1;
+				newCountry.iso_3166_alpha_3 = countryCodes.iso_code_2;
+				newCountry.iso_3166_numeric = Number.parseInt(
+					countryCodes.iso_code_3,
+					10,
+				);
+				newCountry.stanag = countryCodes.stanag_code;
+				newCountry.internet_code = countryCodes.internet_code;
+				newCountry.code_comment = countryCodes.comment;
+				newCountry.flag_description = countryData.flag_description;
+				newCountry.published_at = published;
 
-			newCountry.published_at = published_at;
-			newCountry.flag_description = parsedData.flag_description;
+				const existingRegion = await this.regionRepository.findOne({
+					name: countryData.region,
+				});
+				const region = existingRegion || new Region();
+				if (!existingRegion) {
+					region.name = countryData.region;
+					await this.regionRepository.save(region);
+				}
+				newCountry.region = region;
 
-			this.countryRepository.save(newCountry);
+				if (existingCountry) {
+					newCountry = this.countryRepository.merge(
+						existingCountry,
+						newCountry,
+					);
+				}
 
-			for (const category of parsedData.categories) {
-				const newCategory =
-					(await this.categoryRepository.findOne({
-						title: category.title,
-					})) || new Category();
-				newCategory.comparative =
-					category.comparative || newCategory.comparative;
-				newCategory.title = category.title || newCategory.title;
-				this.categoryRepository.save(newCategory);
+				await this.countryRepository.save(newCountry);
 
-				for (const field of category.fields) {
-					const newField =
-						(await this.fieldRepository.findOne({
-							country: newCountry,
-							category: newCategory,
-							field_id: Number.parseInt(field.field_id, 10),
-						})) || new Field();
-					newField.field_id = Number.parseInt(field.field_id, 10);
-					newField.definition =
-						field.definition || newField.definition;
-					newField.id_slug = field.id || newField.id_slug;
-					newField.content = field.content || newField.content;
-					newField.country = newCountry;
-					newField.category = newCategory;
-					this.fieldRepository.save(newField);
+				for (const category of countryData.categories) {
+					const existingCategory =
+						await this.categoryRepository.findOne({
+							title: category.title,
+						});
+					const workingCategory = existingCategory || new Category();
+
+					if (!existingCategory) {
+						workingCategory.title = category.title;
+						workingCategory.comparative =
+							category.comparative === 'true'
+								? true
+								: category.comparative === 'false'
+								? false
+								: undefined;
+						await this.categoryRepository.save(workingCategory);
+					}
+
+					for (const field of category.fields) {
+						const fieldId = Number.parseInt(field.field_id, 10);
+						const existingField =
+							await this.fieldRepository.findOne({
+								field_id: fieldId,
+								country: newCountry,
+							});
+						const workingField = existingField || new Field();
+						workingField.title = field.title;
+						workingField.comparative =
+							field.comparative === 'true'
+								? true
+								: field.comparative === 'false'
+								? false
+								: undefined;
+						workingField.field_id = fieldId;
+						workingField.definition = field.definition;
+						workingField.id_slug = field.id;
+						workingField.content = field.content;
+						workingField.country = newCountry;
+						workingField.category = workingCategory;
+
+						await this.fieldRepository.save(workingField);
+					}
 				}
 			}
+		} catch (e) {
+			this.logger.error(e);
 		}
 	}
 }
