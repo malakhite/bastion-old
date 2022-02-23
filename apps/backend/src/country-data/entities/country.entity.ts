@@ -32,7 +32,7 @@ export class Country extends Base {
 	@Column({ type: 'varchar', length: 3 })
 	iso_3166_alpha_3!: string;
 
-	@Column({ type: 'numeric', length: 3 })
+	@Column({ type: 'numeric' })
 	iso_3166_numeric!: number;
 
 	@Column({

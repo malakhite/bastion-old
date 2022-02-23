@@ -1,4 +1,5 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, OnModuleInit } from '@nestjs/common';
+import { Cron, CronExpression } from '@nestjs/schedule';
 import { InjectRepository } from '@nestjs/typeorm';
 import axios, { AxiosInstance } from 'axios';
 import { Repository } from 'typeorm';
@@ -16,7 +17,7 @@ import {
 } from './interfaces/page-data';
 
 @Injectable()
-export class CountryDataService {
+export class CountryDataService implements OnModuleInit {
 	countries: CountryListData['countries']['edges'] = [];
 	fetcher: AxiosInstance;
 	updates: {
@@ -40,11 +41,16 @@ export class CountryDataService {
 		private regionRepository: Repository<Region>,
 	) {
 		this.fetcher = axios.create({
-			baseURL: 'https://www.cia.gov/the-world-factbook/page-data/',
+			baseURL: 'https://www.cia.gov/the-world-factbook/page-data',
 			headers: {
 				accept: 'application/json',
 			},
 		});
+	}
+
+	async onModuleInit() {
+		await this.init();
+		await this.upsertCountries();
 	}
 
 	async init(): Promise<void> {
@@ -71,6 +77,7 @@ export class CountryDataService {
 		return sourceEntry?.updated;
 	}
 
+	@Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT)
 	async upsertCountries() {
 		if (this.countries.length === 0) {
 			await this.init();
@@ -79,18 +86,17 @@ export class CountryDataService {
 		const { data: countryCodeResponse } = await this.fetcher.get<
 			PageData<CountryCodeData>
 		>('/references/country-data-codes/page-data.json');
+
 		const parsedCodes: CountryCodeDataJson = JSON.parse(
 			countryCodeResponse.result.data.page.json,
 		);
 		const { country_codes, updated } = parsedCodes;
-		const codeUpdateDate = new Date(updated);
-		const codeLastUpdate = this.getLastUpdate(
-			FactbookSources.COUNTRY_CODES,
-		);
-		if (codeLastUpdate && codeLastUpdate < codeUpdateDate) {
+		const remoteUpdated = new Date(updated);
+		const localUpdated = this.getLastUpdate(FactbookSources.COUNTRY_CODES);
+		if (localUpdated && localUpdated < remoteUpdated) {
 			const update = new FactbookUpdate();
 			update.data_source = FactbookSources.COUNTRY_CODES;
-			update.updated = codeUpdateDate;
+			update.updated = remoteUpdated;
 			this.updateRepository.save(update);
 			this.updates[update.data_source] = update;
 		}
@@ -100,18 +106,24 @@ export class CountryDataService {
 			const { data: countryDataResponse } = await this.fetcher.get<
 				PageData<CountryData>
 			>(`${url}page-data.json`);
+
 			const parsedData: CountryDataValues = JSON.parse(
 				countryDataResponse.result.data.country.json,
 			);
+
+			const newCountry =
+				(await this.countryRepository.findOne({
+					fips: parsedData.code,
+				})) || new Country();
+
 			const published_at = new Date(parsedData.published);
-			const [existingCountry] = await this.countryRepository.find({
-				fips: parsedData.code,
-			});
-			if (existingCountry.published_at >= published_at) {
+			if (
+				newCountry.published_at &&
+				published_at > newCountry.published_at
+			) {
 				break;
 			}
 
-			const newCountryEntity = new Country();
 			const countryCode = country_codes.find(
 				(code) => code.gec === parsedData.code,
 			);
@@ -120,22 +132,46 @@ export class CountryDataService {
 					`Country codes not loaded for ${country.node.title}`,
 				);
 			}
-			newCountryEntity.addCountryCodeData(countryCode);
+
+			newCountry.addCountryCodeData(countryCode);
+
+			const region =
+				(await this.regionRepository.findOne({
+					name: parsedData.region,
+				})) || new Region();
+			region.name = region.name || parsedData.region;
+			newCountry.region = region;
+
+			newCountry.published_at = published_at;
+			newCountry.flag_description = parsedData.flag_description;
+
+			this.countryRepository.save(newCountry);
 
 			for (const category of parsedData.categories) {
-				let categoryToUse: Category;
-				const [existingCategory] = await this.categoryRepository.find({
-					title: category.title,
-				});
-				if (existingCategory) {
-					categoryToUse = existingCategory;
-				} else {
-					categoryToUse = new Category();
-					categoryToUse.comparative = category.comparative;
-					categoryToUse.title = category.title;
-				}
+				const newCategory =
+					(await this.categoryRepository.findOne({
+						title: category.title,
+					})) || new Category();
+				newCategory.comparative =
+					category.comparative || newCategory.comparative;
+				newCategory.title = category.title || newCategory.title;
+				this.categoryRepository.save(newCategory);
 
 				for (const field of category.fields) {
+					const newField =
+						(await this.fieldRepository.findOne({
+							country: newCountry,
+							category: newCategory,
+							field_id: Number.parseInt(field.field_id, 10),
+						})) || new Field();
+					newField.field_id = Number.parseInt(field.field_id, 10);
+					newField.definition =
+						field.definition || newField.definition;
+					newField.id_slug = field.id || newField.id_slug;
+					newField.content = field.content || newField.content;
+					newField.country = newCountry;
+					newField.category = newCategory;
+					this.fieldRepository.save(newField);
 				}
 			}
 		}

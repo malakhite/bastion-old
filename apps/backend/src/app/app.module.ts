@@ -3,6 +3,7 @@ import { resolve } from 'path';
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { ScheduleModule } from '@nestjs/schedule';
 import { LoggerModule } from 'nestjs-pino';
 import configuration from '../config';
 import { AssetModule } from '../asset/asset.module';
@@ -11,6 +12,7 @@ import { PostModule } from '../post/post.module';
 import { UserModule } from '../user/user.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { CountryDataModule } from '../country-data/country-data.module';
 
 @Module({
 	controllers: [AppController],
@@ -34,6 +36,7 @@ import { AppService } from './app.service';
 			isGlobal: true,
 			load: [configuration],
 		}),
+		ScheduleModule.forRoot(),
 		TypeOrmModule.forRootAsync({
 			imports: [ConfigModule],
 			inject: [ConfigService],
@@ -51,6 +54,7 @@ import { AppService } from './app.service';
 		}),
 		AssetModule,
 		AuthModule,
+		CountryDataModule,
 		PostModule,
 		UserModule,
 	],
