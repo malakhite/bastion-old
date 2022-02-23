@@ -12,6 +12,12 @@ class Shared extends Base {
 }
 
 @Entity()
+export class Category extends Shared {
+	@OneToMany(() => Field, (field) => field.category)
+	fields?: Field[];
+}
+
+@Entity()
 export class Field extends Shared {
 	@Column({ type: 'numeric' })
 	field_id!: number;
@@ -31,11 +37,5 @@ export class Field extends Shared {
 
 	@ManyToOne(() => Category)
 	@JoinColumn({ name: 'category_id' })
-	category!: Category;
-}
-
-@Entity()
-export class Category extends Shared {
-	@OneToMany(() => Field, (field) => field.category)
-	fields!: Field[];
+	category?: Category;
 }
