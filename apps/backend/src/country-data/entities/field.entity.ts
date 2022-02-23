@@ -7,8 +7,8 @@ class Shared extends Base {
 	@Column({ type: 'varchar' })
 	title!: string;
 
-	@Column()
-	comparative!: boolean;
+	@Column({ nullable: true })
+	comparative?: boolean;
 }
 
 @Entity()

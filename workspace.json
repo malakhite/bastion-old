@@ -2,6 +2,7 @@
 	"version": 2,
 	"projects": {
 		"backend": "apps/backend",
-		"sleep": "libs/sleep"
+		"sleep": "libs/sleep",
+		"util": "libs/util"
 	}
 }

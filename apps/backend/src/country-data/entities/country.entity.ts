@@ -21,12 +21,15 @@ export class Country extends Base {
 	@Column({ type: 'varchar' })
 	name!: string;
 
+	@Column({ type: 'varchar' })
+	@Index({ unique: true })
+	slug!: string;
+
 	@Column({ type: 'varchar', length: 3 })
 	@Index({ unique: true })
 	fips!: string;
 
 	@Column({ type: 'varchar', length: 2 })
-	@Index({ unique: true })
 	iso_3166_alpha_2!: string;
 
 	@Column({ type: 'varchar', length: 3 })
@@ -51,7 +54,7 @@ export class Country extends Base {
 	})
 	internet_code!: string;
 
-	@Column({ type: 'varchar' })
+	@Column({ type: 'varchar', nullable: true })
 	code_comment!: string;
 
 	@ManyToOne(() => Region, { eager: true })

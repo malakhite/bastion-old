@@ -116,7 +116,7 @@ interface CountryDataFile {
 }
 
 interface CountryDataField {
-	comparative: boolean;
+	comparative: string;
 	content: string;
 	definition: string;
 	field_id: string;
@@ -125,7 +125,7 @@ interface CountryDataField {
 }
 
 interface CountryDataCategory {
-	comparative: boolean;
+	comparative: string;
 	fields: CountryDataField[];
 	title: string;
 }
