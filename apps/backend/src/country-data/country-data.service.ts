@@ -1,5 +1,6 @@
 import { slugify } from '@bastion/util';
 import { HttpService } from '@nestjs/axios';
+import { AxiosError } from 'axios';
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -79,17 +80,35 @@ export class CountryDataService implements OnModuleInit {
 
 	private async fetchCountry(
 		country: CountryListData['countries']['edges'][number],
-	): Promise<CountryDataValues> {
-		const countryUrl = country.node.path.replace('/the-world-factbook', '');
+	): Promise<CountryDataValues | undefined> {
+		try {
+			const countryUrl = country.node.path.replace(
+				'/the-world-factbook',
+				'',
+			);
 
-		const countryDataResponse = this.httpService.get<PageData<CountryData>>(
-			`${countryUrl}page-data.json`,
-		);
-		return await lastValueFrom<CountryDataValues>(
-			countryDataResponse.pipe(
-				map(({ data }) => JSON.parse(data.result.data.country.json)),
-			),
-		);
+			const countryDataResponse = this.httpService.get<
+				PageData<CountryData>
+			>(`${countryUrl}page-data.json`);
+			return await lastValueFrom<CountryDataValues>(
+				countryDataResponse.pipe(
+					map(({ data }) =>
+						JSON.parse(data.result.data.country.json),
+					),
+				),
+			);
+		} catch (e) {
+			if (e instanceof Error) {
+				if (
+					'isAxiosError' in e &&
+					(e as AxiosError).isAxiosError &&
+					(e as AxiosError).response?.status === 404
+				) {
+					return undefined;
+				}
+			}
+			throw e;
+		}
 	}
 
 	@Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT)
@@ -100,6 +119,9 @@ export class CountryDataService implements OnModuleInit {
 
 			for (const country of countries) {
 				const countryData = await this.fetchCountry(country);
+				if (!countryData) {
+					continue;
+				}
 				const published = new Date(
 					Number.parseInt(countryData.published, 10) * 1000,
 				);
@@ -118,24 +140,22 @@ export class CountryDataService implements OnModuleInit {
 					(country_code) => country_code.gec === countryData.code,
 				);
 				if (!countryCodes) {
-					throw new Error(
-						`Country codes missing for country ${country.node.title}`,
-					);
+					continue;
 				}
 				let newCountry = new Country();
 				newCountry.name = country.node.title;
 				newCountry.slug = slugify(country.node.title);
 				newCountry.fips = countryCodes.gec;
-				newCountry.iso_3166_alpha_2 = countryCodes.iso_code_1;
-				newCountry.iso_3166_alpha_3 = countryCodes.iso_code_2;
-				newCountry.iso_3166_numeric = Number.parseInt(
-					countryCodes.iso_code_3,
-					10,
-				);
-				newCountry.stanag = countryCodes.stanag_code;
-				newCountry.internet_code = countryCodes.internet_code;
-				newCountry.code_comment = countryCodes.comment;
-				newCountry.flag_description = countryData.flag_description;
+				newCountry.iso_3166_alpha_2 = countryCodes.iso_code_1 || null;
+				newCountry.iso_3166_alpha_3 = countryCodes.iso_code_2 || null;
+				newCountry.iso_3166_numeric = countryCodes.iso_code_3
+					? Number.parseInt(countryCodes.iso_code_3, 10)
+					: null;
+				newCountry.stanag = countryCodes.stanag_code || null;
+				newCountry.internet_code = countryCodes.internet_code || null;
+				newCountry.code_comment = countryCodes.comment || null;
+				newCountry.flag_description =
+					countryData.flag_description || null;
 				newCountry.published_at = published;
 
 				const existingRegion = await this.regionRepository.findOne({
@@ -191,7 +211,7 @@ export class CountryDataService implements OnModuleInit {
 								? false
 								: undefined;
 						workingField.field_id = fieldId;
-						workingField.definition = field.definition;
+						workingField.definition = field.definition || null;
 						workingField.id_slug = field.id;
 						workingField.content = field.content;
 						workingField.country = newCountry;

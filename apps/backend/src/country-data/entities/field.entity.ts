@@ -22,8 +22,8 @@ export class Field extends Shared {
 	@Column({ type: 'numeric' })
 	field_id!: number;
 
-	@Column({ type: 'text' })
-	definition!: string;
+	@Column({ type: 'text', nullable: true })
+	definition!: string | null;
 
 	@Column({ type: 'varchar' })
 	id_slug!: string;
