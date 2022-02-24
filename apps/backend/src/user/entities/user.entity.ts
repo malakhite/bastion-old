@@ -44,7 +44,7 @@ export class User extends Base {
 
 	@IsBoolean()
 	@Column('boolean')
-	is_active: boolean = true;
+	is_active: boolean = false;
 
 	@ManyToOne(() => Role, { eager: true })
 	@JoinColumn({ name: 'role_id' })

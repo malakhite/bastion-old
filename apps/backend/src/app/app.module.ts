@@ -12,7 +12,7 @@ import { PostModule } from '../post/post.module';
 import { UserModule } from '../user/user.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { CountryDataModule } from '../country-data/country-data.module';
+import { FactbookModule } from '../factbook/factbook.module';
 
 @Module({
 	controllers: [AppController],
@@ -54,7 +54,7 @@ import { CountryDataModule } from '../country-data/country-data.module';
 		}),
 		AssetModule,
 		AuthModule,
-		CountryDataModule,
+		FactbookModule,
 		PostModule,
 		UserModule,
 	],
