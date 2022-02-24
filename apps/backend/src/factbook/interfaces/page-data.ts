@@ -1,4 +1,4 @@
-export interface PageData<T> {
+export interface FactbookPageData<T> {
 	componentChunkName: string;
 	path: string;
 	result: {
@@ -38,7 +38,7 @@ interface HeaderMenuItem {
 
 type YoastMeta = Record<string, unknown>;
 
-export interface CountryListData {
+export interface FactbookCountryListData {
 	countries: {
 		edges: Node[];
 	};
@@ -52,7 +52,7 @@ export interface CountryListData {
 	reference: unknown | null;
 }
 
-export interface CountryCodeData {
+export interface FactbookCountryCodeData {
 	page: {
 		acf: {
 			parent_relative_path: string;
@@ -70,7 +70,7 @@ export interface CountryCodeData {
 /**
  * Parsed from the `json` field of the CountryCodeData response.
  */
-export interface CountryCodeValues {
+export interface FactbookCountryCodeValues {
 	entity: string; // English name
 	gec: string; // FIPS code
 	iso_code_1: string; // ISO 3166 alpha-2 code
@@ -81,14 +81,14 @@ export interface CountryCodeValues {
 	comment: string; // Miscellaneous info
 }
 
-export interface CountryCodeDataJson {
+export interface FactbookCountryCodeDataJson {
 	name: string;
 	updated: string;
 	description: string;
-	country_codes: CountryCodeValues[];
+	country_codes: FactbookCountryCodeValues[];
 }
 
-export interface CountryData {
+export interface FactbookCountryData {
 	country: {
 		acf: Record<string, unknown>;
 		code: string;
@@ -116,7 +116,7 @@ interface CountryDataFile {
 }
 
 interface CountryDataField {
-	comparative: string;
+	comparative: string | false | null;
 	content: string;
 	definition: string;
 	field_id: string;
@@ -125,12 +125,12 @@ interface CountryDataField {
 }
 
 interface CountryDataCategory {
-	comparative: string;
+	comparative: string | false | null;
 	fields: CountryDataField[];
 	title: string;
 }
 
-export interface CountryDataValues {
+export interface FactbookCountryDataValues {
 	categories: CountryDataCategory[];
 	code: string;
 	flag_description: string;

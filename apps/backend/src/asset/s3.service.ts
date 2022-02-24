@@ -17,7 +17,6 @@ export class S3Service {
 				Body: dataBuffer,
 			}),
 		);
-		console.log(uploadResult);
 
 		return Key;
 	}
