@@ -115,7 +115,7 @@ interface CountryDataFile {
 	type: FileType;
 }
 
-interface CountryDataField {
+export interface CountryDataField {
 	comparative: string | false | null;
 	content: string;
 	definition: string;
@@ -124,7 +124,7 @@ interface CountryDataField {
 	title: string;
 }
 
-interface CountryDataCategory {
+export interface CountryDataCategory {
 	comparative: string | false | null;
 	fields: CountryDataField[];
 	title: string;
