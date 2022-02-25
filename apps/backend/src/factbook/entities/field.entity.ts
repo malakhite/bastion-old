@@ -4,7 +4,6 @@ import {
 	Index,
 	JoinColumn,
 	ManyToOne,
-	PrimaryColumn,
 	PrimaryGeneratedColumn,
 } from 'typeorm';
 import { FactbookCountry } from './country.entity';
@@ -23,8 +22,12 @@ export class FactbookCategory {
 
 @Entity({ name: 'factbook_field_types' })
 export class FactbookFieldType {
-	@PrimaryColumn({ type: 'numeric' })
+	@PrimaryGeneratedColumn()
 	id!: number;
+
+	@Column({ type: 'numeric', nullable: true })
+	@Index()
+	cia_id!: number | null;
 
 	@Column({ type: 'text' })
 	title!: string;

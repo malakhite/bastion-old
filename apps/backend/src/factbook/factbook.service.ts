@@ -216,11 +216,16 @@ export class FactbookService implements OnModuleInit {
 					for (const field of category.fields) {
 						const fieldId = Number.parseInt(field.field_id, 10);
 						let fieldType = await this.fieldTypeRepository.findOne({
-							id: fieldId,
+							slug: field.id,
 						});
 						if (!fieldType) {
+							fieldType = await this.fieldTypeRepository.findOne({
+								slug: field.id,
+							});
+						}
+						if (!fieldType) {
 							fieldType = new FactbookFieldType();
-							fieldType.id = fieldId;
+							fieldType.cia_id = fieldId;
 							fieldType.title = field.title;
 							fieldType.slug = field.id;
 							fieldType.definition = field.definition;
