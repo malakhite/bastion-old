@@ -25,6 +25,8 @@ export class FactbookFieldType {
 	@PrimaryGeneratedColumn()
 	id!: number;
 
+	// Originally used this as the primary key, but the source data occasionally
+	// omits this value
 	@Column({ type: 'numeric', nullable: true })
 	@Index()
 	cia_id!: number | null;
@@ -32,6 +34,8 @@ export class FactbookFieldType {
 	@Column({ type: 'text' })
 	title!: string;
 
+	// So far this appears to be a universal, unique identifier, however we are
+	// still generating a key to back it up.
 	@Column({ type: 'text' })
 	@Index({ unique: true })
 	slug!: string;
@@ -47,7 +51,7 @@ export class FactbookField {
 
 	@ManyToOne(() => FactbookFieldType)
 	@JoinColumn({ name: 'field_type_id' })
-	fieldType!: FactbookFieldType;
+	field_type!: FactbookFieldType;
 
 	@ManyToOne(() => FactbookCountry, (country) => country.fields)
 	@JoinColumn({ name: 'country_id' })

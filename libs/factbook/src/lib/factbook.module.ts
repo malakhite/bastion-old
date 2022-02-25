@@ -12,7 +12,7 @@ import { FactbookRegion } from './entities/region.entity';
 
 @Module({
 	controllers: [],
-	exports: [],
+	exports: [FactbookService],
 	imports: [
 		HttpModule.register({
 			baseURL: 'https://www.cia.gov/the-world-factbook/page-data',

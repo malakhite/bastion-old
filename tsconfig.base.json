@@ -16,6 +16,7 @@
 		"strict": true,
 		"target": "es2015",
 		"paths": {
+			"@bastion/factbook": ["libs/factbook/src/index.ts"],
 			"@bastion/sleep": ["libs/sleep/src/index.ts"],
 			"@bastion/util": ["libs/util/src/index.ts"]
 		}

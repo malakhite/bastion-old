@@ -1,21 +1,33 @@
-import 'multer';
 import { resolve } from 'path';
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { TypeOrmModule } from '@nestjs/typeorm';
 import { ScheduleModule } from '@nestjs/schedule';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { HttpModule } from '@nestjs/axios';
 import { LoggerModule } from 'nestjs-pino';
+
+import {
+	FactbookCategory,
+	FactbookCountry,
+	FactbookField,
+	FactbookFieldType,
+	FactbookModule,
+	FactbookRegion,
+} from '@bastion/factbook';
+
 import configuration from '../config';
-import { AssetModule } from '../asset/asset.module';
-import { AuthModule } from '../auth/auth.module';
-import { PostModule } from '../post/post.module';
-import { UserModule } from '../user/user.module';
-import { AppController } from './app.controller';
 import { AppService } from './app.service';
 
 @Module({
-	controllers: [AppController],
 	imports: [
+		ConfigModule.forRoot({
+			cache: true,
+			envFilePath: resolve(__dirname, '..', '..', '..', '.env'),
+			expandVariables: true,
+			isGlobal: true,
+			load: [configuration],
+		}),
+		HttpModule,
 		LoggerModule.forRoot({
 			pinoHttp:
 				process.env.NODE_ENV === 'development'
@@ -31,13 +43,6 @@ import { AppService } from './app.service';
 					  }
 					: {},
 		}),
-		ConfigModule.forRoot({
-			cache: true,
-			envFilePath: resolve(__dirname, '..', '..', '..', '.env'),
-			expandVariables: true,
-			isGlobal: true,
-			load: [configuration],
-		}),
 		ScheduleModule.forRoot(),
 		TypeOrmModule.forRootAsync({
 			imports: [ConfigModule],
@@ -51,13 +56,16 @@ import { AppService } from './app.service';
 				username: configService.get('database.username'),
 				password: configService.get('database.password'),
 				synchronize: configService.get('database.synchronize'),
-				autoLoadEntities: true,
+				entities: [
+					FactbookCategory,
+					FactbookCountry,
+					FactbookField,
+					FactbookFieldType,
+					FactbookRegion,
+				],
 			}),
 		}),
-		AssetModule,
-		AuthModule,
-		PostModule,
-		UserModule,
+		FactbookModule,
 	],
 	providers: [AppService],
 })

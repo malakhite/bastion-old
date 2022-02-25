@@ -2,6 +2,8 @@
 	"version": 2,
 	"projects": {
 		"backend": "apps/backend",
+		"factbook": "libs/factbook",
+		"factbook-intake": "apps/factbook-intake",
 		"sleep": "libs/sleep",
 		"util": "libs/util"
 	}

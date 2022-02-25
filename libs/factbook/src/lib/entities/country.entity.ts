@@ -1,22 +1,44 @@
+import { Exclude } from 'class-transformer';
+import { IsDate, IsUUID } from 'class-validator';
 import {
 	Column,
+	CreateDateColumn,
+	DeleteDateColumn,
 	Entity,
 	Index,
 	JoinColumn,
 	ManyToOne,
 	OneToMany,
+	PrimaryGeneratedColumn,
+	UpdateDateColumn,
 } from 'typeorm';
-import { Base } from '../../common/entities/base.entity';
 import { FactbookField } from './field.entity';
 import { FactbookRegion } from './region.entity';
 
 @Entity({
 	name: 'factbook_countries',
 	orderBy: {
-		name: 'ASC',
+		slug: 'ASC',
 	},
 })
-export class FactbookCountry extends Base {
+export class FactbookCountry {
+	@IsUUID()
+	@PrimaryGeneratedColumn('uuid')
+	id!: string;
+
+	@IsDate()
+	@CreateDateColumn({ type: 'timestamptz' })
+	created_at!: Date;
+
+	@IsDate()
+	@UpdateDateColumn({ type: 'timestamptz', nullable: true })
+	updated_at: Date | null = null;
+
+	@Exclude()
+	@IsDate()
+	@DeleteDateColumn({ type: 'timestamptz', nullable: true })
+	deleted_at: Date | null = null;
+
 	@Column({ type: 'text' })
 	name!: string;
 
