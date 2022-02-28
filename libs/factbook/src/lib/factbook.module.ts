@@ -2,17 +2,18 @@ import { Module } from '@nestjs/common';
 import { HttpModule } from '@nestjs/axios';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { FactbookService } from './factbook.service';
-import { FactbookCountry } from './entities/country.entity';
+import { FactbookCrudService } from './factbook-crud.service';
 import {
 	FactbookCategory,
+	FactbookCountry,
 	FactbookField,
 	FactbookFieldType,
-} from './entities/field.entity';
-import { FactbookRegion } from './entities/region.entity';
+	FactbookRegion,
+} from './entities';
 
 @Module({
 	controllers: [],
-	exports: [FactbookService],
+	exports: [FactbookService, FactbookCrudService],
 	imports: [
 		HttpModule.register({
 			baseURL: 'https://www.cia.gov/the-world-factbook/page-data',
@@ -28,6 +29,6 @@ import { FactbookRegion } from './entities/region.entity';
 			FactbookRegion,
 		]),
 	],
-	providers: [FactbookService],
+	providers: [FactbookService, FactbookCrudService],
 })
 export class FactbookModule {}
