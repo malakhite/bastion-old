@@ -1,6 +1,13 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import {
+	ClassSerializerInterceptor,
+	Controller,
+	Get,
+	Param,
+	UseInterceptors,
+} from '@nestjs/common';
 import { FactbookCrudService } from '@bastion/factbook';
 
+@UseInterceptors(ClassSerializerInterceptor)
 @Controller({ path: 'factbook', version: '1' })
 export class FactbookController {
 	constructor(private readonly factbookService: FactbookCrudService) {}
