@@ -17,14 +17,24 @@ export class FactbookCrudService {
 	public async findOneById(id: string) {
 		return this.countryRepository.find({
 			where: { id },
-			relations: ['fields', 'fields.category', 'region'],
+			relations: [
+				'fields',
+				'fields.category',
+				'fields.field_type',
+				'region',
+			],
 		});
 	}
 
 	public async findOneBySlug(slug: string) {
 		return this.countryRepository.find({
 			where: { slug },
-			relations: ['fields', 'fields.category', 'region'],
+			relations: [
+				'fields',
+				'fields.category',
+				'fields.field_type',
+				'region',
+			],
 		});
 	}
 }
