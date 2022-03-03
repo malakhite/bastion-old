@@ -1,6 +1,7 @@
 import { ConfigObject } from '@nestjs/config';
 
 export default (): ConfigObject => ({
+	node_env: process.env.NODE_ENV,
 	host: process.env.HOST || 'localhost',
 	port: parseInt(process.env.PORT as string, 10) || 3333,
 	database: {
@@ -11,7 +12,7 @@ export default (): ConfigObject => ({
 		synchronize: process.env.NODE_ENV !== 'production',
 	},
 	jwt: {
-		secret: process.env.JWT_SECRET || 'abcd1234',
+		secret: process.env.JWT_SECRET,
 	},
 	s3: {
 		key_id: process.env.AWS_ACCESS_KEY_ID,

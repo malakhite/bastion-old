@@ -10,9 +10,5 @@ services:
     volumes:
       - scottabbey.com-data:/var/lib/postgresql/data:rw
 
-  redis:
-    image: redis:alpine
-    ports:
-      - "6379:6379"
 volumes:
   scottabbey.com-data:
