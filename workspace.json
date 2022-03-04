@@ -4,6 +4,8 @@
 		"backend": "apps/backend",
 		"factbook": "libs/factbook",
 		"factbook-intake": "apps/factbook-intake",
+		"frontend": "apps/frontend",
+		"frontend-e2e": "apps/frontend-e2e",
 		"sleep": "libs/sleep",
 		"util": "libs/util"
 	}

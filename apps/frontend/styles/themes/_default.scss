@@ -1,0 +1,7 @@
+$color-text: hsl(0, 0%, 0%);
+$color-background: hsl(0, 100%, 100%);
+
+:root {
+	--color-text: ${$color-text};
+	--color-background: ${$color-background};
+}
