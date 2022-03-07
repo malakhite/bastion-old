@@ -1,23 +1,27 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { ConfigObject } from '@nestjs/config';
 
 export default (): ConfigObject => ({
-	node_env: process.env.NODE_ENV,
-	host: process.env.HOST || 'localhost',
-	port: parseInt(process.env.PORT as string, 10) || 3333,
+	node_env: process.env.NODE_ENV!,
+	backend_host: process.env.BACKEND_HOST!,
+	backend_port: parseInt(process.env.BACKEND_PORT! as string, 10),
 	database: {
-		host: process.env.DATABASE_HOST || 'localhost',
-		port: parseInt(process.env.DATABASE_PORT as string, 10) || 5432,
-		username: process.env.DATABASE_USERNAME,
-		password: process.env.DATABASE_PASSWORD,
+		host: process.env.DATABASE_HOST!,
+		port: parseInt(process.env.DATABASE_PORT! as string, 10),
+		username: process.env.DATABASE_USERNAME!,
+		password: process.env.DATABASE_PASSWORD!,
 		synchronize: process.env.NODE_ENV !== 'production',
 	},
 	jwt: {
-		secret: process.env.JWT_SECRET,
+		secret: process.env.JWT_SECRET!,
+	},
+	session: {
+		secret: process.env.SESSION_SECRET!,
 	},
 	s3: {
-		key_id: process.env.AWS_ACCESS_KEY_ID,
-		secret_key: process.env.AWS_SECRET_ACCESS_KEY,
-		region: process.env.AWS_REGION,
-		bucket_name: process.env.S3_BUCKET_NAME,
+		key_id: process.env.AWS_ACCESS_KEY_ID!,
+		secret_key: process.env.AWS_SECRET_ACCESS_KEY!,
+		region: process.env.AWS_REGION!,
+		bucket_name: process.env.S3_BUCKET_NAME!,
 	},
 });
