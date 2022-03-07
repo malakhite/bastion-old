@@ -8,6 +8,7 @@ import { TypeormStore } from 'connect-typeorm';
 import { AppModule } from './app/app.module';
 import { getRepository } from 'typeorm';
 import { Session } from './auth/entities/session.entity';
+import configuration from './config';
 
 async function bootstrap() {
 	const app = await NestFactory.create(AppModule, { bufferLogs: true });
@@ -16,7 +17,8 @@ async function bootstrap() {
 	app.enableVersioning({
 		type: VersioningType.URI,
 	});
-	const config = app.get(ConfigService);
+	const config =
+		app.get<ConfigService<ReturnType<typeof configuration>>>(ConfigService);
 	app.useLogger(app.get(Logger));
 	const sessionRepository = getRepository(Session);
 	app.use(
@@ -27,12 +29,12 @@ async function bootstrap() {
 			resave: false,
 			saveUninitialized: false,
 			// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-			secret: config.get('SESSION_SECRET')!,
+			secret: config.get('session.secret')!,
 			store: new TypeormStore().connect(sessionRepository),
 		}),
 	);
-	const host = config.get('HOST');
-	const port = config.get('PORT');
+	const host = config.get('backend.host');
+	const port = config.get('backend.port');
 	await app.listen(port, host);
 }
 
