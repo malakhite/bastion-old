@@ -1,6 +1,9 @@
 import faker from '@faker-js/faker';
-import { Card, Text } from '@mantine/core';
+import { Card, Text, Title } from '@mantine/core';
 import Image from 'next/image';
+import Link from 'next/link';
+
+// import Link from '../components/Link';
 
 type Post = {
 	id: string;
@@ -63,7 +66,23 @@ export function Index() {
 								width={post.hero.width}
 							/>
 						</Card.Section>
-						<Text>{`${post.content.slice(0, 100)}...`}</Text>
+						<Title order={3}>
+							<Link href={`/posts/${post.slug}`} passHref>
+								<Text
+									component="a"
+									lineClamp={1}
+									variant="link"
+								>
+									{post.title}
+								</Text>
+							</Link>
+						</Title>
+						<Link href={`/posts/author/${post.author.id}`} passHref>
+							<Text component="a" size="sm" variant="link">
+								{post.author.name}
+							</Text>
+						</Link>
+						<Text lineClamp={3}>{`${post.content}...`}</Text>
 					</Card>
 				</div>
 			))}

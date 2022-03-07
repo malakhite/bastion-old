@@ -4,7 +4,7 @@ import {
 	NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { LessThanOrEqual, Repository } from 'typeorm';
 import { AssetService } from '../asset/asset.service';
 import { UserService } from '../user/user.service';
 import { CreatePostDto } from './dto/create-post.dto';
@@ -51,6 +51,19 @@ export class PostService {
 			return await this.postRepository.find({ skip, take });
 		}
 		return await this.postRepository.find();
+	}
+
+	async findAllPublishedPosts(take?: number, skip?: number): Promise<Post[]> {
+		if (skip && take) {
+			return await this.postRepository.find({
+				skip,
+				take,
+				where: { published_at: LessThanOrEqual(new Date()) },
+			});
+		}
+		return await this.postRepository.find({
+			where: { published_at: LessThanOrEqual(new Date()) },
+		});
 	}
 
 	async findOne(id: string): Promise<Post | undefined> {
