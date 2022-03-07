@@ -7,4 +7,4 @@ export enum ValidRole {
 }
 
 export const ROLES_KEY = 'roles';
-export const Roles = (...args: ValidRole[]) => SetMetadata('roles', args);
+export const Roles = (...args: ValidRole[]) => SetMetadata(ROLES_KEY, args);

@@ -7,6 +7,7 @@ import {
 	MantineProvider,
 } from '@mantine/core';
 import { useColorScheme } from '@mantine/hooks';
+import Layout from '../components/Layout/Layout';
 // import '../styles/index.scss';
 
 export default function CustomApp({ Component, pageProps }: AppProps) {
@@ -33,7 +34,9 @@ export default function CustomApp({ Component, pageProps }: AppProps) {
 							colorScheme,
 						}}
 					>
-						<Component {...pageProps} />
+						<Layout>
+							<Component {...pageProps} />
+						</Layout>
 					</MantineProvider>
 				</ColorSchemeProvider>
 			</main>

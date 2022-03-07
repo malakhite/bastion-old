@@ -20,21 +20,24 @@ async function bootstrap() {
 	const config =
 		app.get<ConfigService<ReturnType<typeof configuration>>>(ConfigService);
 	app.useLogger(app.get(Logger));
-	const sessionRepository = getRepository(Session);
-	app.use(
-		session({
-			cookie: {
-				httpOnly: true,
-			},
-			resave: false,
-			saveUninitialized: false,
-			// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-			secret: config.get('session.secret')!,
-			store: new TypeormStore().connect(sessionRepository),
-		}),
-	);
-	const host = config.get('backend.host');
-	const port = config.get('backend.port');
+	// const sessionRepository = getRepository(Session);
+	// app.use(
+	// 	session({
+	// 		cookie: {
+	// 			httpOnly: true,
+	// 		},
+	// 		resave: false,
+	// 		saveUninitialized: false,
+	// 		// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+	// 		secret: config.get('session.secret')!,
+	// 		store: new TypeormStore().connect(sessionRepository),
+	// 	}),
+	// );
+
+	// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+	const host = process.env.BACKEND_HOST!;
+	// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+	const port = Number.parseInt(process.env.BACKEND_PORT!, 10);
 	await app.listen(port, host);
 }
 

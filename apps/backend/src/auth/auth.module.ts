@@ -23,7 +23,7 @@ import { Session } from './entities/session.entity';
 				signOptions: { expiresIn: '1h' },
 			}),
 		}),
-		TypeOrmModule.forFeature([Session]),
+		// TypeOrmModule.forFeature([Session]),
 		PassportModule,
 		UserModule,
 	],
