@@ -20,7 +20,6 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { SelfGuard } from '../auth/guards/self.guard';
 
-@UseGuards(JwtAuthGuard, SelfGuard)
 @UseInterceptors(ClassSerializerInterceptor)
 @Controller({ path: 'user', version: '1' })
 export class UserController {
@@ -53,6 +52,7 @@ export class UserController {
 	}
 
 	@Patch(':id')
+	@UseGuards(JwtAuthGuard, SelfGuard)
 	async update(
 		@Param('id') id: string,
 		@Body() updateUserDto: UpdateUserDto,
@@ -61,6 +61,7 @@ export class UserController {
 	}
 
 	@Delete(':id')
+	@UseGuards(JwtAuthGuard, SelfGuard)
 	async remove(@Param('id') id: string) {
 		return await this.userService.remove(id);
 	}

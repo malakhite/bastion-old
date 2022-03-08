@@ -11,7 +11,10 @@ import { Session } from './auth/entities/session.entity';
 import configuration from './config';
 
 async function bootstrap() {
-	const app = await NestFactory.create(AppModule, { bufferLogs: true });
+	const app = await NestFactory.create(AppModule, {
+		bufferLogs: true,
+		cors: { origin: true },
+	});
 	const globalPrefix = 'api';
 	app.setGlobalPrefix(globalPrefix);
 	app.enableVersioning({

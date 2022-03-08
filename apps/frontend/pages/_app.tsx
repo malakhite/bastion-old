@@ -6,14 +6,20 @@ import {
 	ColorSchemeProvider,
 	MantineProvider,
 } from '@mantine/core';
-import { useColorScheme } from '@mantine/hooks';
+import { useColorScheme, useLocalStorageValue } from '@mantine/hooks';
+import { config } from '@fortawesome/fontawesome-svg-core';
+import '@fortawesome/fontawesome-svg-core/styles.css';
+
 import Layout from '../components/Layout/Layout';
-// import '../styles/index.scss';
+
+config.autoAddCss = false;
 
 export default function CustomApp({ Component, pageProps }: AppProps) {
 	const userColorScheme = useColorScheme();
-	const [colorScheme, setColorScheme] =
-		useState<ColorScheme>(userColorScheme);
+	const [colorScheme, setColorScheme] = useLocalStorageValue<ColorScheme>({
+		key: 'color-scheme',
+		defaultValue: userColorScheme,
+	});
 
 	const toggleColorScheme = (value?: ColorScheme) =>
 		setColorScheme(value || (colorScheme === 'dark' ? 'light' : 'dark'));
@@ -32,6 +38,11 @@ export default function CustomApp({ Component, pageProps }: AppProps) {
 						withNormalizeCSS
 						theme={{
 							colorScheme,
+							fontFamily: '"Noto Sans", sans-serif',
+							fontFamilyMonospace: '"Noto Sans Mono", monospace',
+							headings: {
+								fontFamily: '"Noto Serif Display", serif',
+							},
 						}}
 					>
 						<Layout>
