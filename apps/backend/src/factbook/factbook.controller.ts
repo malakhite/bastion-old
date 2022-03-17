@@ -8,7 +8,7 @@ import {
 import { FactbookCrudService } from '@bastion/factbook';
 
 @UseInterceptors(ClassSerializerInterceptor)
-@Controller({ path: 'factbook', version: '1' })
+@Controller({ path: 'api/factbook', version: '1' })
 export class FactbookController {
 	constructor(private readonly factbookService: FactbookCrudService) {}
 

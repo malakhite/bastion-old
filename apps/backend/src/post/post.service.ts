@@ -25,7 +25,7 @@ export class PostService {
 
 		const author = await this.userService.findOne(createPostDto.author_id);
 		if (author) {
-			post.author = author;
+			post.current_revision.author = author;
 		} else {
 			throw new BadRequestException(
 				`Author is required. Unable to find author with id ${createPostDto.author_id}`,
@@ -35,7 +35,7 @@ export class PostService {
 		if (createPostDto.hero_id) {
 			const hero = await this.assetService.findOne(createPostDto.hero_id);
 			if (hero) {
-				post.hero = hero;
+				post.current_revision.hero = hero;
 			} else {
 				throw new BadRequestException(
 					`Asset with id ${createPostDto.hero_id} not found`,

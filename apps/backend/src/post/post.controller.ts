@@ -20,7 +20,7 @@ import { RoleGuard } from '../auth/guards/role.guard';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
 @UseInterceptors(ClassSerializerInterceptor)
-@Controller({ path: 'post', version: '1' })
+@Controller({ path: 'api/post', version: '1' })
 export class PostController {
 	constructor(private readonly postService: PostService) {}
 
@@ -33,7 +33,7 @@ export class PostController {
 
 	@UseGuards(JwtAuthGuard, RoleGuard)
 	@Roles(ValidRole.ADMIN, ValidRole.USER)
-	@Get('unpublished')
+	@Get('all')
 	async findAll(@Query('skip') skip?: string, @Query('take') take?: string) {
 		if (skip && take) {
 			return await this.postService.findAll(+take, +skip);

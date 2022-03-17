@@ -1,9 +1,18 @@
 /* eslint-disable @typescript-eslint/no-inferrable-types */
-import { IsDate } from 'class-validator';
-import { Column, Entity, Index, JoinColumn, ManyToOne } from 'typeorm';
-import { Asset } from '../../asset/entities/asset.entity';
-import { Base } from '../../common/entities/base.entity';
-import { User } from '../../user/entities/user.entity';
+import { Exclude } from 'class-transformer';
+import { IsDate, IsUUID } from 'class-validator';
+import {
+	Column,
+	CreateDateColumn,
+	DeleteDateColumn,
+	Entity,
+	Index,
+	JoinColumn,
+	OneToOne,
+	PrimaryGeneratedColumn,
+	UpdateDateColumn,
+} from 'typeorm';
+import { PostRevision } from './post-revision.entity';
 
 @Entity({
 	name: 'posts',
@@ -11,30 +20,21 @@ import { User } from '../../user/entities/user.entity';
 		published_at: 'DESC',
 	},
 })
-export class Post extends Base {
+export class Post {
+	@IsUUID()
+	@PrimaryGeneratedColumn('uuid')
+	id!: string;
+
 	@Column({
-		type: 'varchar',
+		type: 'text',
 		transformer: {
-			to: (value: string) => value.toLowerCase().trim(),
+			to: (value: string) =>
+				value.toLowerCase().trim().replace(/\s+/g, '-'),
 			from: (value) => value,
 		},
 	})
 	@Index({ unique: true })
 	slug!: string;
-
-	@Column('varchar')
-	title!: string;
-
-	@ManyToOne(() => User, { eager: true })
-	@JoinColumn({ name: 'author_id' })
-	author!: User;
-
-	@ManyToOne(() => Asset, { eager: true, nullable: true })
-	@JoinColumn({ name: 'hero_id' })
-	hero: Asset | null = null;
-
-	@Column({ type: 'text' })
-	content!: string;
 
 	@Column({ type: 'boolean' })
 	is_published: boolean = false;
@@ -42,4 +42,21 @@ export class Post extends Base {
 	@IsDate()
 	@Column({ type: 'timestamptz', nullable: true })
 	published_at: Date | null = null;
+
+	@OneToOne(() => PostRevision, { eager: true })
+	@JoinColumn({ name: 'current_revision_id' })
+	current_revision!: PostRevision;
+
+	@IsDate()
+	@CreateDateColumn({ type: 'timestamptz' })
+	created_at!: Date;
+
+	@IsDate()
+	@UpdateDateColumn({ type: 'timestamptz', nullable: true })
+	updated_at: Date | null = null;
+
+	@Exclude()
+	@IsDate()
+	@DeleteDateColumn({ type: 'timestamptz', nullable: true })
+	deleted_at: Date | null = null;
 }

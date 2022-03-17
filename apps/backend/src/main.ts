@@ -15,8 +15,6 @@ async function bootstrap() {
 		bufferLogs: true,
 		cors: { origin: true },
 	});
-	const globalPrefix = 'api';
-	app.setGlobalPrefix(globalPrefix);
 	app.enableVersioning({
 		type: VersioningType.URI,
 	});

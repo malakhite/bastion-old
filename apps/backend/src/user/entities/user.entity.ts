@@ -1,18 +1,21 @@
 /* eslint-disable @typescript-eslint/no-inferrable-types */
 import * as argon2 from 'argon2';
 import { Exclude } from 'class-transformer';
-import { IsBoolean, IsEmail } from 'class-validator';
+import { IsBoolean, IsDate, IsEmail, IsUUID } from 'class-validator';
 import {
 	BeforeInsert,
 	BeforeUpdate,
 	Column,
+	CreateDateColumn,
+	DeleteDateColumn,
 	Entity,
 	Index,
 	JoinColumn,
 	ManyToOne,
+	PrimaryGeneratedColumn,
 	Unique,
+	UpdateDateColumn,
 } from 'typeorm';
-import { Base } from '../../common/entities/base.entity';
 import { Role } from './role.entity';
 
 @Entity({
@@ -23,7 +26,11 @@ import { Role } from './role.entity';
 	},
 })
 @Unique(['email'])
-export class User extends Base {
+export class User {
+	@IsUUID()
+	@PrimaryGeneratedColumn('uuid')
+	id!: string;
+
 	@IsEmail()
 	@Column({
 		type: 'varchar',
@@ -50,6 +57,19 @@ export class User extends Base {
 	@JoinColumn({ name: 'role_id' })
 	role!: Role;
 
+	@IsDate()
+	@CreateDateColumn({ type: 'timestamptz' })
+	created_at!: Date;
+
+	@IsDate()
+	@UpdateDateColumn({ type: 'timestamptz', nullable: true })
+	updated_at: Date | null = null;
+
+	@Exclude()
+	@IsDate()
+	@DeleteDateColumn({ type: 'timestamptz', nullable: true })
+	deleted_at: Date | null = null;
+
 	@BeforeInsert()
 	async hashPassword(password = this.password) {
 		if (password) {
@@ -65,7 +85,6 @@ export class User extends Base {
 	}
 
 	constructor(partial: Partial<User>) {
-		super();
 		Object.assign(this, partial);
 	}
 }

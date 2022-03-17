@@ -14,7 +14,7 @@ import { AssetService } from './asset.service';
 import { CreateAssetDto } from './dto/create-asset.dto';
 import { UpdateAssetDto } from './dto/update-asset.dto';
 
-@Controller({ path: 'asset', version: '1' })
+@Controller({ path: 'api/asset', version: '1' })
 export class AssetController {
 	constructor(private readonly assetService: AssetService) {}
 
