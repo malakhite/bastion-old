@@ -9,6 +9,29 @@ services:
       - "5432:5432"
     volumes:
       - scottabbey.com-data:/var/lib/postgresql/data:rw
+  
+  redis:
+    image: redis
+
+  api:
+    image: node:16
+    environment:
+      NODE_ENV:
+      BACKEND_HOST:
+      BACKEND_PORT:
+      DATABASE_USERNAME:
+      DATABASE_PASSWORD:
+      JWT_SECRET:
+      SESSION_SECRET:
+      AWS_SECRET_ACCESS_KEY:
+      AWS_ACCESS_KEY_ID:
+      AWS_REGION:
+      S3_BUCKET_NAME:
+    volumes:
+      - ./dist/apps/backend:/opt/app:rw
+      - ./node_modules:/opt/app/node_modules:rw
+    entrypoint: node /opt/app/main.js
+      
 
 volumes:
   scottabbey.com-data:

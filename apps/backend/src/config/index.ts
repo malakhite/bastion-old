@@ -4,10 +4,10 @@ import { ConfigObject } from '@nestjs/config';
 export default (): ConfigObject => ({
 	node_env: process.env.NODE_ENV!,
 	backend_host: process.env.BACKEND_HOST!,
-	backend_port: parseInt(process.env.BACKEND_PORT! as string, 10),
+	backend_port: parseInt(process.env.BACKEND_PORT!, 10),
 	database: {
 		host: process.env.DATABASE_HOST!,
-		port: parseInt(process.env.DATABASE_PORT! as string, 10),
+		port: parseInt(process.env.DATABASE_PORT!, 10),
 		username: process.env.DATABASE_USERNAME!,
 		password: process.env.DATABASE_PASSWORD!,
 		synchronize: process.env.NODE_ENV !== 'production',
@@ -19,6 +19,10 @@ export default (): ConfigObject => ({
 		baseUrl: process.env.PULSEPOINT_BASEURL,
 		agencyList: process.env.PULSEPOINT_AGENCY_LIST,
 		incidents: process.env.PULSEPOINT_INCIDENTS,
+	},
+	redis: {
+		host: process.env.REDIS_HOST,
+		port: parseInt(process.env.REDIS_PORT!, 10),
 	},
 	session: {
 		secret: process.env.SESSION_SECRET!,

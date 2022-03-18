@@ -33,6 +33,8 @@ import { FactbookModule } from '../factbook/factbook.module';
 				DATABASE_PASSWORD: Joi.string().required(),
 				JWT_SECRET: Joi.string().required(),
 				SESSION_SECRET: Joi.string().required(),
+				REDIS_HOST: Joi.string().required(),
+				REDIS_PORT: Joi.number().required(),
 				AWS_SECRET_ACCESS_KEY: Joi.string().required(),
 				AWS_ACCESS_KEY_ID: Joi.string().required(),
 				AWS_REGION: Joi.string().required(),
@@ -62,10 +64,18 @@ import { FactbookModule } from '../factbook/factbook.module';
 				};
 			},
 		}),
-		BullModule.forRoot({
-			redis: {
-				host: 'localhost',
-				port: 6379,
+		BullModule.forRootAsync({
+			imports: [ConfigModule],
+			inject: [ConfigService],
+			useFactory: (
+				configService: ConfigService<ReturnType<typeof configuration>>,
+			) => {
+				return {
+					redis: {
+						host: configService.get('redis.host'),
+						port: configService.get('redis.port'),
+					},
+				};
 			},
 		}),
 		TypeOrmModule.forRootAsync({
