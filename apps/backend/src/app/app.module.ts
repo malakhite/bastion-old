@@ -1,6 +1,7 @@
 import 'multer';
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { BullModule } from '@nestjs/bull';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { LoggerModule } from 'nestjs-pino';
 import * as Joi from 'joi';
@@ -59,6 +60,12 @@ import { FactbookModule } from '../factbook/factbook.module';
 							  }
 							: {},
 				};
+			},
+		}),
+		BullModule.forRoot({
+			redis: {
+				host: 'localhost',
+				port: 6379,
 			},
 		}),
 		TypeOrmModule.forRootAsync({

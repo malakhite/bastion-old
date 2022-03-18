@@ -15,6 +15,11 @@ export default (): ConfigObject => ({
 	jwt: {
 		secret: process.env.JWT_SECRET!,
 	},
+	pulsepoint: {
+		baseUrl: process.env.PULSEPOINT_BASEURL,
+		agencyList: process.env.PULSEPOINT_AGENCY_LIST,
+		incidents: process.env.PULSEPOINT_INCIDENTS,
+	},
 	session: {
 		secret: process.env.SESSION_SECRET!,
 	},
