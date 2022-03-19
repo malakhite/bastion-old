@@ -8,17 +8,19 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - scottabbey.com-data:/var/lib/postgresql/data:rw
+      - bastion-data:/var/lib/postgresql/data:rw
   
   redis:
     image: redis
+    volumes:
+      - bastion-redis:/data:rw
 
   api:
     image: node:16
     environment:
       NODE_ENV:
-      BACKEND_HOST:
-      BACKEND_PORT:
+      BACKEND_HOST: db
+      BACKEND_PORT: 5432
       DATABASE_USERNAME:
       DATABASE_PASSWORD:
       JWT_SECRET:
@@ -27,11 +29,16 @@ services:
       AWS_ACCESS_KEY_ID:
       AWS_REGION:
       S3_BUCKET_NAME:
+    ports:
+      - 3000:3000
+    working_dir: /workspace
     volumes:
-      - ./dist/apps/backend:/opt/app:rw
-      - ./node_modules:/opt/app/node_modules:rw
-    entrypoint: node /opt/app/main.js
+      - ./:/workspace:rw
+      - bastion-backend-node_modules:/workspace/node_modules:rw
+    entrypoint: npx nx run backend:serve
       
 
 volumes:
-  scottabbey.com-data:
+  bastion-backend-node_modules:
+  bastion-data:
+  bastion-redis:

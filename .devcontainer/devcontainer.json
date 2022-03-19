@@ -1,0 +1,8 @@
+{
+	"name": "Existing Docker Compose (Extend)",
+	"dockerComposeFile": ["../docker-compose.dev.yml"],
+	"service": "api",
+	"workspaceFolder": "/workspace",
+	"settings": {},
+	"extensions": []
+}
