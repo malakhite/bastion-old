@@ -2,43 +2,26 @@ services:
   db:
     image: postgres:14
     environment:
-      POSTGRES_USER: ${DATABASE_USERNAME}
-      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
-      POSTGRES_DB: ${DATABASE_USERNAME}
-    ports:
-      - "5432:5432"
+      POSTGRES_USER: bastiondev
+      POSTGRES_PASSWORD: UhTp9783
+      POSTGRES_DB: bastiondev
     volumes:
-      - bastion-data:/var/lib/postgresql/data:rw
-  
-  redis:
-    image: redis
-    volumes:
-      - bastion-redis:/data:rw
+      - db:/var/lib/postgresql/data:rw
 
-  api:
+  redis:
+    image: redis:6
+    volumes:
+      - redis:/data:rw
+
+  backend:
     image: node:16
-    environment:
-      NODE_ENV:
-      BACKEND_HOST: db
-      BACKEND_PORT: 5432
-      DATABASE_USERNAME:
-      DATABASE_PASSWORD:
-      JWT_SECRET:
-      SESSION_SECRET:
-      AWS_SECRET_ACCESS_KEY:
-      AWS_ACCESS_KEY_ID:
-      AWS_REGION:
-      S3_BUCKET_NAME:
     ports:
-      - 3000:3000
+      - 3333:3333
     working_dir: /workspace
     volumes:
-      - ./:/workspace:rw
-      - bastion-backend-node_modules:/workspace/node_modules:rw
+      - ./:/workspace:cache
     entrypoint: npx nx run backend:serve
-      
 
 volumes:
-  bastion-backend-node_modules:
-  bastion-data:
-  bastion-redis:
+  db:
+  redis:
