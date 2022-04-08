@@ -15,7 +15,7 @@ import { AuthService } from './auth.service';
 import { LocalAuthGuard } from './guards/local-auth.guard';
 
 @UseInterceptors(ClassSerializerInterceptor)
-@Controller({ path: 'api/auth', version: '1' })
+@Controller({ path: 'auth', version: '1' })
 export class AuthController {
 	constructor(
 		private authService: AuthService,

@@ -1,19 +1,15 @@
 import 'multer';
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { BullModule } from '@nestjs/bull';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { LoggerModule } from 'nestjs-pino';
 import * as Joi from 'joi';
 
 import configuration from '../config';
-import { AssetModule } from '../asset/asset.module';
 import { AuthModule } from '../auth/auth.module';
-import { PostModule } from '../post/post.module';
 import { UserModule } from '../user/user.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { FactbookModule } from '../factbook/factbook.module';
 
 @Module({
 	controllers: [AppController],
@@ -64,20 +60,6 @@ import { FactbookModule } from '../factbook/factbook.module';
 				};
 			},
 		}),
-		BullModule.forRootAsync({
-			imports: [ConfigModule],
-			inject: [ConfigService],
-			useFactory: (
-				configService: ConfigService<ReturnType<typeof configuration>>,
-			) => {
-				return {
-					redis: {
-						host: configService.get('redis.host'),
-						port: configService.get('redis.port'),
-					},
-				};
-			},
-		}),
 		TypeOrmModule.forRootAsync({
 			imports: [ConfigModule],
 			inject: [ConfigService],
@@ -93,10 +75,7 @@ import { FactbookModule } from '../factbook/factbook.module';
 				autoLoadEntities: true,
 			}),
 		}),
-		AssetModule,
 		AuthModule,
-		FactbookModule,
-		PostModule,
 		UserModule,
 	],
 	providers: [AppService],

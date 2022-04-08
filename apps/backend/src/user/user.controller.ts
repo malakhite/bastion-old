@@ -21,7 +21,7 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { SelfGuard } from '../auth/guards/self.guard';
 
 @UseInterceptors(ClassSerializerInterceptor)
-@Controller({ path: 'api/user', version: '1' })
+@Controller({ path: 'users', version: '1' })
 export class UserController {
 	constructor(private readonly userService: UserService) {}
 

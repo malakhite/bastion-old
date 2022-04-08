@@ -8,20 +8,5 @@ services:
     volumes:
       - db:/var/lib/postgresql/data:rw
 
-  redis:
-    image: redis:6
-    volumes:
-      - redis:/data:rw
-
-  backend:
-    image: node:16
-    ports:
-      - 3333:3333
-    working_dir: /workspace
-    volumes:
-      - ./:/workspace:cache
-    entrypoint: npx nx run backend:serve
-
 volumes:
   db:
-  redis:
