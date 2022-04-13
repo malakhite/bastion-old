@@ -1,4 +1,4 @@
-import { VersioningType } from '@nestjs/common';
+import { ValidationPipe, VersioningType } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { Logger } from 'nestjs-pino';
 
@@ -9,6 +9,9 @@ async function bootstrap() {
 		bufferLogs: true,
 		cors: { origin: true },
 	});
+
+	app.useGlobalPipes(new ValidationPipe({ transform: true }));
+
 	app.enableVersioning({
 		type: VersioningType.URI,
 	});

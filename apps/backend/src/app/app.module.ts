@@ -1,15 +1,13 @@
 import 'multer';
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { TypeOrmModule } from '@nestjs/typeorm';
 import { LoggerModule } from 'nestjs-pino';
 import * as Joi from 'joi';
 
-import configuration from '../config';
-import { AuthModule } from '../auth/auth.module';
 import { UserModule } from '../user/user.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { DatabaseModule } from '../db/database.module';
 
 @Module({
 	controllers: [AppController],
@@ -18,19 +16,18 @@ import { AppService } from './app.service';
 			cache: true,
 			expandVariables: true,
 			isGlobal: true,
-			load: [configuration],
 			validationSchema: Joi.object({
 				NODE_ENV: Joi.string().required(),
 				BACKEND_HOST: Joi.string().required(),
 				BACKEND_PORT: Joi.number().required(),
-				DATABASE_HOST: Joi.string().required(),
-				DATABASE_PORT: Joi.number().required(),
-				DATABASE_USERNAME: Joi.string().required(),
-				DATABASE_PASSWORD: Joi.string().required(),
-				JWT_SECRET: Joi.string().required(),
-				SESSION_SECRET: Joi.string().required(),
-				REDIS_HOST: Joi.string().required(),
-				REDIS_PORT: Joi.number().required(),
+				POSTGRES_HOST: Joi.string().required(),
+				POSTGRES_PORT: Joi.number().required(),
+				POSTGRES_USERNAME: Joi.string().required(),
+				POSTGRES_PASSWORD: Joi.string().required(),
+				POSTGRES_DB: Joi.string().required(),
+				SYNCHRONIZE_DB: Joi.boolean(),
+				ACCESS_TOKEN_EXPIRATION: Joi.string().required(),
+				ACCESS_TOKEN_SECRET: Joi.string().required(),
 				AWS_SECRET_ACCESS_KEY: Joi.string().required(),
 				AWS_ACCESS_KEY_ID: Joi.string().required(),
 				AWS_REGION: Joi.string().required(),
@@ -40,12 +37,10 @@ import { AppService } from './app.service';
 		LoggerModule.forRootAsync({
 			imports: [ConfigModule],
 			inject: [ConfigService],
-			useFactory: (
-				configService: ConfigService<ReturnType<typeof configuration>>,
-			) => {
+			useFactory: (configService: ConfigService) => {
 				return {
 					pinoHttp:
-						configService.get('node_env') === 'development'
+						configService.get('NODE_ENV') === 'development'
 							? {
 									transport: {
 										target: 'pino-pretty',
@@ -55,27 +50,13 @@ import { AppService } from './app.service';
 											translateTime: true,
 										},
 									},
+									level: 'debug',
 							  }
 							: {},
 				};
 			},
 		}),
-		TypeOrmModule.forRootAsync({
-			imports: [ConfigModule],
-			inject: [ConfigService],
-			useFactory: (
-				configService: ConfigService<ReturnType<typeof configuration>>,
-			) => ({
-				type: 'postgres',
-				host: configService.get('database.host'),
-				port: configService.get('database.port'),
-				username: configService.get('database.username'),
-				password: configService.get('database.password'),
-				synchronize: configService.get('database.synchronize'),
-				autoLoadEntities: true,
-			}),
-		}),
-		AuthModule,
+		DatabaseModule,
 		UserModule,
 	],
 	providers: [AppService],

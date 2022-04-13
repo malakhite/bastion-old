@@ -18,9 +18,11 @@ import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
-import { SelfGuard } from '../auth/guards/self.guard';
+import { Roles } from '../auth/decorators/roles.decorator';
 
 @UseInterceptors(ClassSerializerInterceptor)
+@UseGuards(JwtAuthGuard)
+@Roles('admin')
 @Controller({ path: 'users', version: '1' })
 export class UserController {
 	constructor(private readonly userService: UserService) {}
@@ -52,7 +54,6 @@ export class UserController {
 	}
 
 	@Patch(':id')
-	@UseGuards(JwtAuthGuard, SelfGuard)
 	async update(
 		@Param('id') id: string,
 		@Body() updateUserDto: UpdateUserDto,
@@ -61,7 +62,6 @@ export class UserController {
 	}
 
 	@Delete(':id')
-	@UseGuards(JwtAuthGuard, SelfGuard)
 	async remove(@Param('id') id: string) {
 		return await this.userService.remove(id);
 	}

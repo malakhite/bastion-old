@@ -33,7 +33,7 @@ export class User {
 
 	@IsEmail()
 	@Column({
-		type: 'varchar',
+		type: 'text',
 		transformer: {
 			to: (value: string) => value.toLowerCase().trim(),
 			from: (value) => value,
@@ -42,20 +42,24 @@ export class User {
 	@Index({ unique: true })
 	email!: string;
 
-	@Column('varchar')
+	@Column({ type: 'text' })
 	name!: string;
 
 	@Exclude()
-	@Column('varchar')
+	@Column({ type: 'text' })
 	password!: string;
 
 	@IsBoolean()
-	@Column('boolean')
+	@Column({ type: 'boolean' })
 	is_active: boolean = false;
 
 	@ManyToOne(() => Role, { eager: true })
 	@JoinColumn({ name: 'role_id' })
 	role!: Role;
+
+	@Exclude()
+	@Column({ type: 'text', nullable: true })
+	refresh_token?: string;
 
 	@IsDate()
 	@CreateDateColumn({ type: 'timestamptz' })
