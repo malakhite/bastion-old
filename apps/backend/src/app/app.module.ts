@@ -22,7 +22,7 @@ import { DatabaseModule } from '../db/database.module';
 				BACKEND_PORT: Joi.number().required(),
 				POSTGRES_HOST: Joi.string().required(),
 				POSTGRES_PORT: Joi.number().required(),
-				POSTGRES_USERNAME: Joi.string().required(),
+				POSTGRES_USER: Joi.string().required(),
 				POSTGRES_PASSWORD: Joi.string().required(),
 				POSTGRES_DB: Joi.string().required(),
 				SYNCHRONIZE_DB: Joi.boolean(),

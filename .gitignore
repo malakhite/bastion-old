@@ -40,3 +40,4 @@ Thumbs.db
 
 # Local configs
 .env
+ormconfig.ts
