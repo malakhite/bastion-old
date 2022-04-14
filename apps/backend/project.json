@@ -4,7 +4,7 @@
 	"projectType": "application",
 	"targets": {
 		"build": {
-			"executor": "@nrwl/node:build",
+			"executor": "@nrwl/node:webpack",
 			"outputs": ["{options.outputPath}"],
 			"options": {
 				"generatePackageJson": true,
@@ -27,7 +27,7 @@
 			}
 		},
 		"serve": {
-			"executor": "@nrwl/node:execute",
+			"executor": "@nrwl/node:node",
 			"options": {
 				"buildTarget": "backend:build"
 			}
@@ -48,8 +48,13 @@
 			}
 		},
 		"docker": {
-			"builder": "@nrwl/workspace:run-commands",
-			"dependsOn": [{ "target": "build", "projects": "self" }],
+			"executor": "@nrwl/workspace:run-commands",
+			"dependsOn": [
+				{
+					"target": "build",
+					"projects": "self"
+				}
+			],
 			"options": {
 				"commands": [
 					"docker build -f ./apps/backend/Dockerfile . -t backend"

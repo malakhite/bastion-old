@@ -5,7 +5,7 @@
 		"module": "commonjs",
 		"types": ["node"],
 		"emitDecoratorMetadata": true,
-		"target": "esNext"
+		"target": "es2015"
 	},
 	"exclude": ["**/*.spec.ts", "**/*.test.ts"],
 	"include": ["**/*.ts"]
