@@ -70,7 +70,7 @@ export function CreatePost() {
 	const authors = data.map((user) => user.name);
 
 	return (
-		<Paper padding="md" shadow="sm">
+		<Paper p="md" shadow="sm">
 			<MediaQuery largerThan="sm" styles={{ flexDirection: 'row' }}>
 				<Group direction="column" mt="md" grow>
 					<TextInput

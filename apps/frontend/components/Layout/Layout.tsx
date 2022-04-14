@@ -36,7 +36,7 @@ function Layout({ children }) {
 			fixed
 			navbar={
 				<Navbar
-					padding="md"
+					p="md"
 					// Breakpoint at which navbar will be hidden if hidden prop is true
 					hiddenBreakpoint="sm"
 					// Hides navbar when viewport size is less than value specified in hiddenBreakpoint
@@ -50,7 +50,7 @@ function Layout({ children }) {
 				</Navbar>
 			}
 			header={
-				<Header height={70} padding="md">
+				<Header height={70} p="md">
 					{/* Handle other responsive styles with MediaQuery component or createStyles function */}
 					<div
 						style={{
