@@ -57,7 +57,8 @@
 			],
 			"options": {
 				"commands": [
-					"docker build -f ./apps/backend/Dockerfile . -t backend"
+					"docker build -f ./apps/backend/Dockerfile . -t ghcr.io/malakhite/backend-be:latest",
+					"docker push ghcr.io/malakhite/backend-be:latest"
 				],
 				"parallel": false
 			}
