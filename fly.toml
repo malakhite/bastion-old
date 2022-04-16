@@ -1,0 +1,4 @@
+app = "bastion"
+
+[build]
+	image = "ghcr.io/malakhite/bastion-be:latest"
