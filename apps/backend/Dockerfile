@@ -9,4 +9,4 @@ RUN npm install reflect-metadata tslib rxjs @nestjs/platform-express
 
 EXPOSE ${PORT}
 
-ENTRYPOINT [ "node", "./main.js" ]
+ENTRYPOINT [ "node", "/app/main.js" ]
