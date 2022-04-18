@@ -63,4 +63,4 @@ jobs:
         with:
           file: apps/backend/Dockerfile
           push: true
-          tags: ${{ steps.meta.output.tags }}
+          tags: ${{ steps.meta.outputs.tags }}
