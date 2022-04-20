@@ -25,10 +25,6 @@ import { AuthModule } from '../auth/auth.module';
 				SYNCHRONIZE_DB: Joi.boolean(),
 				ACCESS_TOKEN_EXPIRATION: Joi.string().required(),
 				ACCESS_TOKEN_SECRET: Joi.string().required(),
-				AWS_SECRET_ACCESS_KEY: Joi.string().required(),
-				AWS_ACCESS_KEY_ID: Joi.string().required(),
-				AWS_REGION: Joi.string().required(),
-				S3_BUCKET_NAME: Joi.string().required(),
 			}),
 		}),
 		LoggerModule.forRootAsync({
