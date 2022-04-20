@@ -5,7 +5,7 @@ ENV PORT 3333
 WORKDIR /app
 COPY ./dist/apps/backend ./
 RUN npm install --production
-RUN npm install reflect-metadata tslib rxjs @nestjs/platform-express
+RUN npm install reflect-metadata tslib rxjs @nestjs/platform-express pg
 
 EXPOSE ${PORT}
 
