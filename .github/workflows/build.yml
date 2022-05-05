@@ -36,7 +36,7 @@ jobs:
 
       - name: Set meta
         id: meta
-        uses: docker/metadata-action@v3
+        uses: docker/metadata-action@v4
         with:
           images: |
             ${{ env.REGISTRY }}/malakhite/${{ env.IMAGE_NAME }}
