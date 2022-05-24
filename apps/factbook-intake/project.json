@@ -1,5 +1,4 @@
 {
-	"root": "apps/factbook-intake",
 	"sourceRoot": "apps/factbook-intake/src",
 	"projectType": "application",
 	"targets": {
@@ -42,7 +41,7 @@
 			"executor": "@nrwl/jest:jest",
 			"outputs": ["coverage/apps/factbook-intake"],
 			"options": {
-				"jestConfig": "apps/factbook-intake/jest.config.js",
+				"jestConfig": "apps/factbook-intake/jest.config.ts",
 				"passWithNoTests": true
 			}
 		}

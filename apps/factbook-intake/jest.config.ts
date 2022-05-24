@@ -1,4 +1,5 @@
-module.exports = {
+/* eslint-disable */
+export default {
 	displayName: 'factbook-intake',
 	preset: '../../jest.preset.js',
 	globals: {

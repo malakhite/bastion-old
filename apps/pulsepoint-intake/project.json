@@ -1,5 +1,4 @@
 {
-	"root": "apps/pulsepoint-intake",
 	"sourceRoot": "apps/pulsepoint-intake/src",
 	"projectType": "application",
 	"targets": {
@@ -43,7 +42,7 @@
 			"executor": "@nrwl/jest:jest",
 			"outputs": ["coverage/apps/pulsepoint-intake"],
 			"options": {
-				"jestConfig": "apps/pulsepoint-intake/jest.config.js",
+				"jestConfig": "apps/pulsepoint-intake/jest.config.ts",
 				"passWithNoTests": true
 			}
 		}

@@ -1,5 +1,4 @@
 {
-	"root": "libs/factbook",
 	"sourceRoot": "libs/factbook/src",
 	"projectType": "library",
 	"targets": {
@@ -14,7 +13,7 @@
 			"executor": "@nrwl/jest:jest",
 			"outputs": ["coverage/libs/factbook"],
 			"options": {
-				"jestConfig": "libs/factbook/jest.config.js",
+				"jestConfig": "libs/factbook/jest.config.ts",
 				"passWithNoTests": true
 			}
 		}

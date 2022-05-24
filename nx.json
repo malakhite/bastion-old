@@ -1,46 +1,52 @@
 {
-	"npmScope": "bastion",
-	"affected": {
-		"defaultBase": "main"
-	},
-	"cli": {
-		"defaultCollection": "@nrwl/nest"
-	},
-	"implicitDependencies": {
-		"package.json": {
-			"dependencies": "*",
-			"devDependencies": "*"
-		},
-		".eslintrc.json": "*"
-	},
-	"tasksRunnerOptions": {
-		"default": {
-			"runner": "nx/tasks-runners/default",
-			"options": {
-				"cacheableOperations": ["build", "lint", "test", "e2e"]
-			}
-		}
-	},
-	"targetDependencies": {
-		"build": [
-			{
-				"target": "build",
-				"projects": "dependencies"
-			}
-		]
-	},
-	"defaultProject": "backend",
-	"generators": {
-		"@nrwl/react": {
-			"application": {
-				"babel": true
-			}
-		},
-		"@nrwl/next": {
-			"application": {
-				"style": "scss",
-				"linter": "eslint"
-			}
-		}
-	}
+  "npmScope": "bastion",
+  "affected": {
+    "defaultBase": "main"
+  },
+  "cli": {
+    "defaultCollection": "@nrwl/nest"
+  },
+  "implicitDependencies": {
+    "package.json": {
+      "dependencies": "*",
+      "devDependencies": "*"
+    },
+    ".eslintrc.json": "*"
+  },
+  "tasksRunnerOptions": {
+    "default": {
+      "runner": "@nrwl/nx-cloud",
+      "options": {
+        "cacheableOperations": [
+          "build",
+          "lint",
+          "test",
+          "e2e"
+        ],
+        "accessToken": "MTYwYWZiZTMtMzRjNy00NGMzLTlkM2EtNTgwM2JjMzk1NGE1fHJlYWQtd3JpdGU="
+      }
+    }
+  },
+  "targetDependencies": {
+    "build": [
+      {
+        "target": "build",
+        "projects": "dependencies"
+      }
+    ]
+  },
+  "defaultProject": "backend",
+  "generators": {
+    "@nrwl/react": {
+      "application": {
+        "babel": true
+      }
+    },
+    "@nrwl/next": {
+      "application": {
+        "style": "scss",
+        "linter": "eslint"
+      }
+    }
+  }
 }

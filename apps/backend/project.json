@@ -1,5 +1,4 @@
 {
-	"root": "apps/backend",
 	"sourceRoot": "apps/backend/src",
 	"projectType": "application",
 	"targets": {
@@ -43,7 +42,7 @@
 			"executor": "@nrwl/jest:jest",
 			"outputs": ["coverage/apps/backend"],
 			"options": {
-				"jestConfig": "apps/backend/jest.config.js",
+				"jestConfig": "apps/backend/jest.config.ts",
 				"passWithNoTests": true
 			}
 		},
