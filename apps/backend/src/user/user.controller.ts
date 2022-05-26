@@ -12,17 +12,19 @@ import {
 	ClassSerializerInterceptor,
 	UseGuards,
 	Req,
+	Request,
 } from '@nestjs/common';
-import { Request } from 'express';
+import type { Request as ExpressRequest } from 'express';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
+import { Role } from './entities/user.entity';
 
 @UseInterceptors(ClassSerializerInterceptor)
 @UseGuards(JwtAuthGuard)
-@Roles('admin')
+@Roles(Role.ADMIN)
 @Controller({ path: 'users', version: '1' })
 export class UserController {
 	constructor(private readonly userService: UserService) {}
@@ -33,7 +35,12 @@ export class UserController {
 	}
 
 	@Get()
-	async findAll(@Query('email') email?: string) {
+	async findAll(
+		@Request() request: ExpressRequest,
+		@Query('email') email?: string,
+	) {
+		console.log(request.user);
+
 		if (email) {
 			const user = await this.userService.findOneByEmail(email);
 			if (user) {

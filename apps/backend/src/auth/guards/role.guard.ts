@@ -1,20 +1,26 @@
-import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
+import {
+	CanActivate,
+	ExecutionContext,
+	ForbiddenException,
+	Injectable,
+} from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { Request } from 'express';
-import { Role } from '../../user/entities/role.entity';
+import { Role } from '../../user/entities/user.entity';
 import { ROLES_KEY } from '../decorators/roles.decorator';
-import { JWTData } from '../dto/jwt-data.dto';
+
+import type { Request } from 'express';
+import type { JWTData } from '../dto/jwt-data.dto';
+import type { UserService } from '../../user/user.service';
 
 @Injectable()
 export class RoleGuard implements CanActivate {
-	constructor(private reflector: Reflector) {}
+	constructor(
+		private reflector: Reflector,
+		private userService: UserService,
+	) {}
 
 	async canActivate(context: ExecutionContext): Promise<boolean> {
-		const request: Request & { user: JWTData } = context
-			.switchToHttp()
-			.getRequest();
-
-		const requiredRoles = this.reflector.getAllAndOverride<Role['name'][]>(
+		const requiredRoles = this.reflector.getAllAndOverride<Role[]>(
 			ROLES_KEY,
 			[context.getHandler(), context.getClass()],
 		);
@@ -23,6 +29,20 @@ export class RoleGuard implements CanActivate {
 			return true;
 		}
 
-		return requiredRoles.includes(request.user.sub);
+		const request: Request & { user: JWTData } = context
+			.switchToHttp()
+			.getRequest();
+		const user = await this.userService.findOne(request.user.sub);
+
+		if (
+			user &&
+			requiredRoles.some(
+				(role) => user.role === role || user.role === Role.OWNER,
+			)
+		) {
+			return true;
+		}
+
+		throw new ForbiddenException();
 	}
 }

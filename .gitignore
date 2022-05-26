@@ -41,3 +41,7 @@ Thumbs.db
 # Local configs
 .env*
 ormconfig.ts
+*.crt
+
+# DB files
+/data

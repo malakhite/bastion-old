@@ -5,6 +5,7 @@ import {
 	InsertEvent,
 	UpdateEvent,
 } from 'typeorm';
+import { genNanoid } from '../../util';
 import { User } from './user.entity';
 
 @EventSubscriber()
@@ -14,6 +15,7 @@ export class UserSubscriber implements EntitySubscriberInterface<User> {
 	}
 
 	async beforeInsert({ entity }: InsertEvent<User>): Promise<void> {
+		entity.id = await genNanoid();
 		entity.password = await argon2.hash(entity.password);
 	}
 

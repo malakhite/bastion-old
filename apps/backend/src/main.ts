@@ -18,9 +18,9 @@ async function bootstrap() {
 	app.useLogger(app.get(Logger));
 
 	// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-	const host = process.env.BACKEND_HOST!;
+	const host = process.env.HOST!;
 	// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-	const port = Number.parseInt(process.env.BACKEND_PORT!, 10);
+	const port = Number.parseInt(process.env.PORT!, 10);
 	await app.listen(port, host);
 }
 

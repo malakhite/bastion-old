@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-inferrable-types */
 import * as argon2 from 'argon2';
 import { Exclude } from 'class-transformer';
-import { IsBoolean, IsDate, IsEmail, IsUUID } from 'class-validator';
+import { IsBoolean, IsDate, IsEmail, IsEnum } from 'class-validator';
 import {
 	BeforeInsert,
 	BeforeUpdate,
@@ -10,13 +10,17 @@ import {
 	DeleteDateColumn,
 	Entity,
 	Index,
-	JoinColumn,
-	ManyToOne,
-	PrimaryGeneratedColumn,
+	PrimaryColumn,
 	Unique,
 	UpdateDateColumn,
 } from 'typeorm';
-import { Role } from './role.entity';
+
+export enum Role {
+	OWNER = 'owner',
+	ADMIN = 'admin',
+	USER = 'user',
+	GUEST = 'guest',
+}
 
 @Entity({
 	name: 'users',
@@ -27,8 +31,7 @@ import { Role } from './role.entity';
 })
 @Unique(['email'])
 export class User {
-	@IsUUID()
-	@PrimaryGeneratedColumn('uuid')
+	@PrimaryColumn({ type: 'text' })
 	id!: string;
 
 	@IsEmail()
@@ -53,13 +56,14 @@ export class User {
 	@Column({ type: 'boolean' })
 	is_active: boolean = false;
 
-	@ManyToOne(() => Role, { eager: true })
-	@JoinColumn({ name: 'role_id' })
+	@IsEnum(Role)
+	@Column({
+		type: 'enum',
+		enum: Role,
+		enumName: 'role',
+		default: Role.GUEST,
+	})
 	role!: Role;
-
-	@Exclude()
-	@Column({ type: 'text', nullable: true })
-	refresh_token?: string;
 
 	@IsDate()
 	@CreateDateColumn({ type: 'timestamptz' })

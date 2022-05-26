@@ -7,6 +7,7 @@ import {
 import type { Request } from 'express';
 import { JWTData } from '../dto/jwt-data.dto';
 import { UserService } from '../../user/user.service';
+import { Role } from '../../user/entities/user.entity';
 
 @Injectable()
 export class SelfGuard implements CanActivate {
@@ -21,7 +22,7 @@ export class SelfGuard implements CanActivate {
 
 		if (
 			user &&
-			(user.role.name === 'admin' || user.id === request.params.id)
+			(user.id === request.params.id || user.role === Role.OWNER)
 		) {
 			return true;
 		}
