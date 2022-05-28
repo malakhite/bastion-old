@@ -9,11 +9,10 @@ import {
 	CreateDateColumn,
 	DeleteDateColumn,
 	Entity,
-	Index,
 	PrimaryColumn,
-	Unique,
 	UpdateDateColumn,
 } from 'typeorm';
+import { genNanoId } from '../../util';
 
 export enum Role {
 	OWNER = 'owner',
@@ -29,7 +28,6 @@ export enum Role {
 		email: 'ASC',
 	},
 })
-@Unique(['email'])
 export class User {
 	@PrimaryColumn({ type: 'text' })
 	id!: string;
@@ -41,8 +39,8 @@ export class User {
 			to: (value: string) => value.toLowerCase().trim(),
 			from: (value) => value,
 		},
+		unique: true,
 	})
-	@Index({ unique: true })
 	email!: string;
 
 	@Column({ type: 'text' })
@@ -73,10 +71,14 @@ export class User {
 	@UpdateDateColumn({ type: 'timestamptz', nullable: true })
 	updated_at: Date | null = null;
 
-	@Exclude()
 	@IsDate()
 	@DeleteDateColumn({ type: 'timestamptz', nullable: true })
 	deleted_at: Date | null = null;
+
+	@BeforeInsert()
+	async addNanoId() {
+		this.id = await genNanoId();
+	}
 
 	@BeforeInsert()
 	async hashPassword(password = this.password) {

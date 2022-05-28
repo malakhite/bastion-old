@@ -1,17 +1,19 @@
-/* eslint-disable @typescript-eslint/no-inferrable-types */
-import { Exclude } from 'class-transformer';
-import { IsDate, IsUUID } from 'class-validator';
+import { IsDate } from 'class-validator';
 import {
+	BeforeInsert,
 	Column,
 	CreateDateColumn,
 	DeleteDateColumn,
 	Entity,
 	Index,
 	JoinColumn,
-	OneToOne,
-	PrimaryGeneratedColumn,
+	OneToMany,
+	ManyToOne,
+	PrimaryColumn,
 	UpdateDateColumn,
 } from 'typeorm';
+import { User } from '../../user/entities/user.entity';
+import { genNanoId } from '../../util';
 import { PostRevision } from './post-revision.entity';
 
 @Entity({
@@ -21,8 +23,7 @@ import { PostRevision } from './post-revision.entity';
 	},
 })
 export class Post {
-	@IsUUID()
-	@PrimaryGeneratedColumn('uuid')
+	@PrimaryColumn({ type: 'text' })
 	id!: string;
 
 	@Column({
@@ -36,16 +37,16 @@ export class Post {
 	@Index({ unique: true })
 	slug!: string;
 
-	@Column({ type: 'boolean' })
-	is_published: boolean = false;
+	@ManyToOne(() => User)
+	@JoinColumn({ name: 'author_id' })
+	author!: User;
+
+	@OneToMany(() => PostRevision, (revision) => revision.post, { eager: true })
+	revisions!: PostRevision[];
 
 	@IsDate()
 	@Column({ type: 'timestamptz', nullable: true })
 	published_at: Date | null = null;
-
-	@OneToOne(() => PostRevision, { eager: true })
-	@JoinColumn({ name: 'current_revision_id' })
-	current_revision!: PostRevision;
 
 	@IsDate()
 	@CreateDateColumn({ type: 'timestamptz' })
@@ -55,8 +56,12 @@ export class Post {
 	@UpdateDateColumn({ type: 'timestamptz', nullable: true })
 	updated_at: Date | null = null;
 
-	@Exclude()
 	@IsDate()
 	@DeleteDateColumn({ type: 'timestamptz', nullable: true })
 	deleted_at: Date | null = null;
+
+	@BeforeInsert()
+	async addNanoId() {
+		this.id = await genNanoId();
+	}
 }

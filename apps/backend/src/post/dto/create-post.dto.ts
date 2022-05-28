@@ -3,7 +3,7 @@ export class CreatePostDto {
 	title!: string;
 	author_id!: string;
 	hero_id?: string;
-	content!: string;
-	is_published?: boolean;
+	text_json?: string;
+	text!: string;
 	published_at?: Date;
 }

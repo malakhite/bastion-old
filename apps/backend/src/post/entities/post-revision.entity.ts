@@ -16,12 +16,15 @@ import { Post } from './post.entity';
 @Entity({
 	name: 'post_revisions',
 	orderBy: {
-		created_at: 'ASC',
+		created_at: 'DESC',
 	},
 })
 export class PostRevision {
 	@PrimaryGeneratedColumn('uuid')
 	id!: string;
+
+	@Column({ type: 'text' })
+	title!: string;
 
 	@ManyToOne(() => Post)
 	@JoinColumn({ name: 'post_id' })
@@ -35,10 +38,10 @@ export class PostRevision {
 	hero: Asset | null = null;
 
 	@Column({ type: 'jsonb', nullable: true })
-	content_json: string | null = null;
+	text_json: string | null = null;
 
 	@Column({ type: 'text' })
-	content!: string;
+	text!: string;
 
 	@ManyToMany(() => PostCategory)
 	@JoinTable()

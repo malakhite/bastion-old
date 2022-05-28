@@ -1,7 +1,7 @@
 import { Injectable, Logger, OnApplicationBootstrap } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { genNanoid } from '../util';
+import { genNanoId } from '../util';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { Role, User } from './entities/user.entity';
@@ -56,7 +56,7 @@ export class UserService implements OnApplicationBootstrap {
 		if (storedUsers === 0) {
 			this.logger.log('No users stored. Adding owner.');
 			const defaultAdmin = new User({
-				id: await genNanoid(),
+				id: await genNanoId(),
 				email: process.env.ADMIN_EMAIL,
 				name: process.env.ADMIN_NAME,
 				password: process.env.ADMIN_PASSWORD,
