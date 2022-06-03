@@ -1,4 +1,3 @@
-import faker from '@faker-js/faker';
 import { Card, Text, Title } from '@mantine/core';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -25,27 +24,6 @@ type Post = {
 };
 
 const posts: Post[] = [];
-
-for (let i = 0; i < 20; i++) {
-	posts.push({
-		id: faker.datatype.uuid(),
-		slug: faker.lorem.slug(),
-		title: faker.lorem.words(),
-		content: faker.lorem.paragraphs(4),
-		published_at: faker.date.past(),
-		hero: {
-			url: 'https://picsum.photos/300/200',
-			alt: faker.lorem.sentence(),
-			height: 200,
-			width: 300,
-		},
-		author: {
-			id: faker.datatype.uuid(),
-			name: faker.name.findName(),
-			email: faker.internet.email(),
-		},
-	});
-}
 
 posts.sort((a, b) => a.published_at.valueOf() - b.published_at.valueOf());
 
