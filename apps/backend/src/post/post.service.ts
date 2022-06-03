@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { LessThanOrEqual, Repository } from 'typeorm';
-import { AssetService } from '../asset/asset.service';
+import { ImageService } from '../images/images.service';
 import { UserService } from '../user/user.service';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
@@ -11,10 +11,11 @@ import { Post } from './entities/post.entity';
 @Injectable()
 export class PostService {
 	constructor(
+		private imageService: ImageService,
 		@InjectRepository(Post)
 		private postRepository: Repository<Post>,
+		@InjectRepository(PostRevision)
 		private postRevisionRepository: Repository<PostRevision>,
-		private assetService: AssetService,
 		private userService: UserService,
 	) {}
 
@@ -36,12 +37,12 @@ export class PostService {
 		}
 
 		if (createPostDto.hero_id) {
-			const hero = await this.assetService.findOne(createPostDto.hero_id);
+			const hero = await this.imageService.findOne(createPostDto.hero_id);
 			if (hero) {
 				postRevision.hero = hero;
 			} else {
 				throw new BadRequestException(
-					`Asset with id ${createPostDto.hero_id} not found`,
+					`Image with id ${createPostDto.hero_id} not found`,
 				);
 			}
 		}
@@ -71,12 +72,12 @@ export class PostService {
 		});
 	}
 
-	async findOne(id: string): Promise<Post | undefined> {
-		return await this.postRepository.findOne(id);
+	async findOne(id: string): Promise<Post | null> {
+		return await this.postRepository.findOne({ where: { id } });
 	}
 
 	async update(id: string, updatePostDto: UpdatePostDto): Promise<Post> {
-		const post = await this.postRepository.findOne(id);
+		const post = await this.postRepository.findOne({ where: { id } });
 		if (post && post.revisions.length > 0) {
 			const { id: revisionId, ...latestRevision } =
 				post.revisions[post.revisions.length - 1];

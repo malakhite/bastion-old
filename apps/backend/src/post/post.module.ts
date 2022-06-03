@@ -4,17 +4,17 @@ import { PostController } from './post.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Post } from './entities/post.entity';
 import { UserModule } from '../user/user.module';
-import { AssetModule } from '../asset/asset.module';
 import { PostCategory } from './entities/category.entity';
 import { PostRevision } from './entities/post-revision.entity';
+import { ImageModule } from '../images/images.module';
 
 @Module({
 	controllers: [PostController],
 	exports: [PostService],
 	imports: [
+		ImageModule,
 		TypeOrmModule.forFeature([Post, PostCategory, PostRevision]),
 		UserModule,
-		AssetModule,
 	],
 	providers: [PostService],
 })

@@ -13,7 +13,7 @@ import { ConfigModule } from '@nestjs/config';
 				HOST: Joi.string().required(),
 				PORT: Joi.number().required(),
 				DATABASE_URL: Joi.string().required(),
-				SYNCHRONIZE_DB: Joi.boolean(),
+				SYNCHRONIZE_DB: Joi.boolean().required(),
 				ACCESS_TOKEN_EXPIRATION: Joi.string().required(),
 				ACCESS_TOKEN_SECRET: Joi.string().required(),
 			}),

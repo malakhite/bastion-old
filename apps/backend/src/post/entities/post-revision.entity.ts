@@ -8,7 +8,7 @@ import {
 	ManyToOne,
 	PrimaryGeneratedColumn,
 } from 'typeorm';
-import { Asset } from '../../asset/entities/asset.entity';
+import { Image } from '../../images/entities/image.entity';
 import { User } from '../../user/entities/user.entity';
 import { PostCategory } from './category.entity';
 import { Post } from './post.entity';
@@ -30,15 +30,15 @@ export class PostRevision {
 	@JoinColumn({ name: 'post_id' })
 	post!: Post;
 
-	@ManyToOne(() => User, { eager: true })
+	@ManyToOne(() => User)
 	author!: User;
 
-	@ManyToOne(() => Asset, { eager: true, nullable: true })
+	@ManyToOne(() => Image, { nullable: true })
 	@JoinColumn({ name: 'hero_id' })
-	hero: Asset | null = null;
+	hero!: Image | null;
 
 	@Column({ type: 'jsonb', nullable: true })
-	text_json: string | null = null;
+	text_json!: string | null;
 
 	@Column({ type: 'text' })
 	text!: string;

@@ -9,5 +9,6 @@
 		"pulsepoint-intake": "apps/pulsepoint-intake",
 		"sleep": "libs/sleep",
 		"util": "libs/util"
-	}
+	},
+	"$schema": "./node_modules/nx/schemas/workspace-schema.json"
 }

@@ -69,11 +69,11 @@ export class User {
 
 	@IsDate()
 	@UpdateDateColumn({ type: 'timestamptz', nullable: true })
-	updated_at: Date | null = null;
+	updated_at?: Date | null;
 
 	@IsDate()
 	@DeleteDateColumn({ type: 'timestamptz', nullable: true })
-	deleted_at: Date | null = null;
+	deleted_at?: Date | null;
 
 	@BeforeInsert()
 	async addNanoId() {

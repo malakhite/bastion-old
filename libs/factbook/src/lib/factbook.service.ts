@@ -4,7 +4,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { lastValueFrom } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { Repository } from 'typeorm';
+import { Equal, Repository } from 'typeorm';
 
 import { nullify } from '@bastion/util';
 
@@ -124,7 +124,9 @@ export class FactbookService {
 		title: string,
 		comparative?: CountryDataCategory['comparative'],
 	): Promise<FactbookCategory> {
-		let category = await this.categoryRepository.findOne({ title });
+		let category = await this.categoryRepository.findOne({
+			where: { title },
+		});
 		if (!category) {
 			category = new FactbookCategory();
 			category.title = title;
@@ -137,7 +139,7 @@ export class FactbookService {
 	}
 
 	async findOrCreateRegion(name: string): Promise<FactbookRegion> {
-		let region = await this.regionRepository.findOne({ name });
+		let region = await this.regionRepository.findOne({ where: { name } });
 		if (!region) {
 			region = new FactbookRegion();
 			region.name = name;
@@ -150,7 +152,9 @@ export class FactbookService {
 		dataField: CountryDataField,
 	): Promise<FactbookFieldType> {
 		let fieldType = await this.fieldTypeRepository.findOne({
-			slug: dataField.id,
+			where: {
+				slug: dataField.id,
+			},
 		});
 		if (!fieldType) {
 			fieldType = new FactbookFieldType();
@@ -168,8 +172,8 @@ export class FactbookService {
 		dataCategory: CountryDataCategory,
 	) {
 		const fields = await this.fieldRepository.find({
-			where: { country },
-			relations: ['field_type', 'country', 'category'],
+			where: { country: Equal(country) },
+			relations: { field_type: true, country: true, category: true },
 		});
 		for (const fieldEntry of dataCategory.fields) {
 			let fieldIndex = fields.findIndex(
@@ -203,7 +207,9 @@ export class FactbookService {
 			Number.parseInt(countryData.published, 10) * 1000,
 		);
 		let country = await this.countryRepository.findOne({
-			gec: countryData.code,
+			where: {
+				gec: countryData.code,
+			},
 		});
 
 		// If there's no update, just return.

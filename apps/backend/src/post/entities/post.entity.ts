@@ -41,7 +41,7 @@ export class Post {
 	@JoinColumn({ name: 'author_id' })
 	author!: User;
 
-	@OneToMany(() => PostRevision, (revision) => revision.post, { eager: true })
+	@OneToMany(() => PostRevision, (revision) => revision.post)
 	revisions!: PostRevision[];
 
 	@IsDate()
@@ -54,11 +54,11 @@ export class Post {
 
 	@IsDate()
 	@UpdateDateColumn({ type: 'timestamptz', nullable: true })
-	updated_at: Date | null = null;
+	updated_at!: Date | null;
 
 	@IsDate()
 	@DeleteDateColumn({ type: 'timestamptz', nullable: true })
-	deleted_at: Date | null = null;
+	deleted_at!: Date | null;
 
 	@BeforeInsert()
 	async addNanoId() {

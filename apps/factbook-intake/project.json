@@ -1,50 +1,59 @@
 {
-	"sourceRoot": "apps/factbook-intake/src",
-	"projectType": "application",
-	"targets": {
-		"build": {
-			"executor": "@nrwl/node:webpack",
-			"outputs": ["{options.outputPath}"],
-			"options": {
-				"outputPath": "dist/apps/factbook-intake",
-				"main": "apps/factbook-intake/src/main.ts",
-				"tsConfig": "apps/factbook-intake/tsconfig.app.json"
-			},
-			"configurations": {
-				"production": {
-					"optimization": true,
-					"extractLicenses": true,
-					"inspect": false,
-					"fileReplacements": [
-						{
-							"replace": "apps/factbook-intake/src/environments/environment.ts",
-							"with": "apps/factbook-intake/src/environments/environment.prod.ts"
-						}
-					]
-				}
-			}
-		},
-		"serve": {
-			"executor": "@nrwl/node:node",
-			"options": {
-				"buildTarget": "factbook-intake:build"
-			}
-		},
-		"lint": {
-			"executor": "@nrwl/linter:eslint",
-			"outputs": ["{options.outputFile}"],
-			"options": {
-				"lintFilePatterns": ["apps/factbook-intake/**/*.ts"]
-			}
-		},
-		"test": {
-			"executor": "@nrwl/jest:jest",
-			"outputs": ["coverage/apps/factbook-intake"],
-			"options": {
-				"jestConfig": "apps/factbook-intake/jest.config.ts",
-				"passWithNoTests": true
-			}
-		}
-	},
-	"tags": []
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/factbook-intake/src",
+  "projectType": "application",
+  "targets": {
+    "build": {
+      "executor": "@nrwl/node:webpack",
+      "outputs": [
+        "{options.outputPath}"
+      ],
+      "options": {
+        "outputPath": "dist/apps/factbook-intake",
+        "main": "apps/factbook-intake/src/main.ts",
+        "tsConfig": "apps/factbook-intake/tsconfig.app.json"
+      },
+      "configurations": {
+        "production": {
+          "optimization": true,
+          "extractLicenses": true,
+          "inspect": false,
+          "fileReplacements": [
+            {
+              "replace": "apps/factbook-intake/src/environments/environment.ts",
+              "with": "apps/factbook-intake/src/environments/environment.prod.ts"
+            }
+          ]
+        }
+      }
+    },
+    "serve": {
+      "executor": "@nrwl/node:node",
+      "options": {
+        "buildTarget": "factbook-intake:build"
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": [
+        "{options.outputFile}"
+      ],
+      "options": {
+        "lintFilePatterns": [
+          "apps/factbook-intake/**/*.ts"
+        ]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": [
+        "coverage/apps/factbook-intake"
+      ],
+      "options": {
+        "jestConfig": "apps/factbook-intake/jest.config.ts",
+        "passWithNoTests": true
+      }
+    }
+  },
+  "tags": []
 }

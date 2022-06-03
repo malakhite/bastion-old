@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { readFileSync } from 'fs';
-import { User } from '../user/entities/user.entity';
 
 @Module({
 	imports: [
@@ -13,8 +12,8 @@ import { User } from '../user/entities/user.entity';
 				return {
 					type: 'postgres',
 					url: configService.get('DATABASE_URL'),
+					autoLoadEntities: true,
 					synchronize: Boolean(configService.get('SYNCHRONIZE_DB')),
-					entities: [User],
 					ssl: {
 						ca: readFileSync('./bastion-do.crt').toString(),
 					},
