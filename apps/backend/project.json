@@ -57,8 +57,9 @@
 			],
 			"options": {
 				"commands": [
-					"docker build -f ./apps/backend/Dockerfile . -t ghcr.io/malakhite/bastion-be:latest",
-					"docker push ghcr.io/malakhite/bastion-be:latest"
+					"export SHA=`git rev-parse --short HEAD`",
+					"docker build -f ./apps/backend/Dockerfile . -t ghcr.io/malakhite/bastion-be:$GITHUB_REF_NAME -t ghcr.io/malakhite/bastion-be:$SHA",
+					"docker push ghcr.io/malakhite/bastion-be:$GITHUB_REF_NAME ghcr.io/malakhite/bastion-be:$SHA"
 				],
 				"parallel": false
 			}
