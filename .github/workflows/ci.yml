@@ -7,30 +7,21 @@ on:
   pull_request:
 
 env:
-  REGISTRY: ghcr.io
+  GHCR_USER: ${{ github.actor }}
+  GHCR_PASS: ${{ secrets.GITHUB_TOKEN }}
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Login to GHCR
-        uses: docker/login-action@v1
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Nx Cloud - Main Job
-        uses: nrwl/ci/.github/workflows/nx-cloud-main.yml@v0.4
-        with:
-          node-version: 16
-          parallel-commands: |
-            npx nx-cloud record -- npx nx workspace-lint
-            npx nx-cloud record -- npx nx format:check
-          parallel-commands-on-agents: |
-            npx nx affected --target=lint --parallel=3
-            npx nx affected --target=test --parallel=3 --ci --code-coverage
-            npx nx affected --target=docker --parallel=3
+  main:
+    name: Nx Cloud - Main Job
+    uses: nrwl/ci/.github/workflows/nx-cloud-main.yml@v0.4
+    with:
+      parallel-commands: |
+        npx nx-cloud record -- npx nx workspace-lint
+        npx nx-cloud record -- npx nx format:check
+      parallel-commands-on-agents: |
+        npx nx affected --target=lint --parallel=3
+        npx nx affected --target=test --parallel=3 --ci --code-coverage
+        npx nx affected --target=docker --parallel=3
 
   agents:
     name: Nx Cloud - Agents
