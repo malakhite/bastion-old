@@ -63,6 +63,6 @@ jobs:
       - name: Build and push backend
         uses: docker/build-push-action@v2
         with:
-          file: apps/backend/Dockerfile
+          file: ./apps/backend/Dockerfile
           push: true
           tags: ${{ steps.meta.outputs.tags }}
