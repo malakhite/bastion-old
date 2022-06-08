@@ -1,4 +1,4 @@
-name: CI
+name: ci
 
 on:
   push:
@@ -34,7 +34,7 @@ jobs:
         run: npm install
 
       - name: Build
-        run: npx nx run-many --target=build --all
+        run: npx nx run-many --target=build --configuration=production --all
 
       - name: Set meta
         id: meta
