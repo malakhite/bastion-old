@@ -1,4 +1,4 @@
-FROM node:lts-alpine AS dev
+FROM node:lts-alpine
 
 ENV PORT 3333
 
