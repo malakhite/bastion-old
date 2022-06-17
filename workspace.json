@@ -6,6 +6,7 @@
 		"factbook-intake": "apps/factbook-intake",
 		"frontend": "apps/frontend",
 		"frontend-e2e": "apps/frontend-e2e",
+		"proxy": "apps/proxy",
 		"pulsepoint-intake": "apps/pulsepoint-intake",
 		"sleep": "libs/sleep",
 		"util": "libs/util"

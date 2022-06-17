@@ -25,7 +25,7 @@ export default function CustomApp({ Component, pageProps }: AppProps) {
 	return (
 		<>
 			<Head>
-				<title>Welcome to frontend!</title>
+				<title>scottabbey.com</title>
 			</Head>
 			<main className="app">
 				<ColorSchemeProvider

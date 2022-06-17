@@ -1,5 +1,7 @@
 import { ValidationPipe, VersioningType } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
+import * as session from 'express-session';
+import * as passport from 'passport';
 import { Logger } from 'nestjs-pino';
 
 import { AppModule } from './app/app.module';
@@ -9,6 +11,17 @@ async function bootstrap() {
 		bufferLogs: true,
 		cors: { origin: true },
 	});
+
+	app.use(
+		session({
+			// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+			secret: process.env.ACCESS_TOKEN_SECRET!,
+			resave: false,
+			saveUninitialized: false,
+		}),
+	);
+	app.use(passport.initialize());
+	app.use(passport.session());
 
 	app.useGlobalPipes(new ValidationPipe({ transform: true }));
 

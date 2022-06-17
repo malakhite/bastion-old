@@ -3,17 +3,19 @@ import {
 	ExecutionContext,
 	ForbiddenException,
 	Injectable,
+	Logger,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { Role } from '../../user/entities/user.entity';
 import { ROLES_KEY } from '../decorators/roles.decorator';
 
-import type { Request } from 'express';
-import type { JWTData } from '../dto/jwt-data.dto';
 import type { UserService } from '../../user/user.service';
+import type { IRequestWithUser } from '../interfaces';
 
 @Injectable()
 export class RoleGuard implements CanActivate {
+	private readonly logger = new Logger(RoleGuard.name);
+
 	constructor(
 		private reflector: Reflector,
 		private userService: UserService,
@@ -29,10 +31,9 @@ export class RoleGuard implements CanActivate {
 			return true;
 		}
 
-		const request: Request & { user: JWTData } = context
-			.switchToHttp()
-			.getRequest();
-		const user = await this.userService.findOne(request.user.sub);
+		const request = context.switchToHttp().getRequest<IRequestWithUser>();
+		const user = await this.userService.findOne(request.user.id);
+		this.logger.log(user);
 
 		if (
 			user &&

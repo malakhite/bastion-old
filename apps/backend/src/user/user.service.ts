@@ -32,8 +32,8 @@ export class UserService implements OnApplicationBootstrap {
 		return await this.userRepository.findOneOrFail({ where: { id } });
 	}
 
-	async findOneByEmail(email: string): Promise<User> {
-		return await this.userRepository.findOneOrFail({ where: { email } });
+	async findOneByEmail(email: string): Promise<User | null> {
+		return await this.userRepository.findOne({ where: { email } });
 	}
 
 	async update(id: string, updateUserDto: UpdateUserDto): Promise<User> {

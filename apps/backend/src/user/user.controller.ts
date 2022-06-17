@@ -11,19 +11,16 @@ import {
 	UseInterceptors,
 	ClassSerializerInterceptor,
 	UseGuards,
-	Req,
-	Request,
 } from '@nestjs/common';
-import type { Request as ExpressRequest } from 'express';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
-import { Roles } from '../auth/decorators/roles.decorator';
+import { SessionGuard } from '../auth/guards/session.guard';
 import { Role } from './entities/user.entity';
+import { Roles } from '../auth/decorators/roles.decorator';
 
 @UseInterceptors(ClassSerializerInterceptor)
-@UseGuards(JwtAuthGuard)
+@UseGuards(SessionGuard)
 @Roles(Role.ADMIN)
 @Controller({ path: 'users', version: '1' })
 export class UserController {
@@ -35,12 +32,7 @@ export class UserController {
 	}
 
 	@Get()
-	async findAll(
-		@Request() request: ExpressRequest,
-		@Query('email') email?: string,
-	) {
-		console.log(request.user);
-
+	async findAll(@Query('email') email?: string) {
 		if (email) {
 			const user = await this.userService.findOneByEmail(email);
 			if (user) {
@@ -52,7 +44,7 @@ export class UserController {
 	}
 
 	@Get(':id')
-	async findOne(@Req() req: Request, @Param('id') id: string) {
+	async findOne(@Param('id') id: string) {
 		const user = await this.userService.findOne(id);
 		if (user) {
 			return user;
