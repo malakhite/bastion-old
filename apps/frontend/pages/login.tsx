@@ -2,7 +2,6 @@ import Joi from 'joi';
 import { Box, Button, Group, PasswordInput, TextInput } from '@mantine/core';
 import { joiResolver, useForm } from '@mantine/form';
 import { useRouter } from 'next/router';
-import { API_HOST } from '../lib/env';
 import { useLocalStorage } from '@mantine/hooks';
 
 export interface User {
@@ -50,7 +49,7 @@ export function Login() {
 	const router = useRouter();
 
 	const handleSubmit = async (values: LoginFormValues): Promise<void> => {
-		const response = await fetch(`${API_HOST}/v1/login`, {
+		const response = await fetch(`/api/login`, {
 			method: 'post',
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify(values),

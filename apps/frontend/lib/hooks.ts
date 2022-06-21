@@ -6,8 +6,8 @@ import { API_HOST } from './env';
 
 import type { User } from '../pages/login';
 
-const fetcher = (url: string) =>
-	fetch(`${API_HOST}${url}`, { credentials: 'include' }).then((r) =>
+const fetcher = (id: string) =>
+	fetch(`${API_HOST}/v1/users/${id}`, { credentials: 'include' }).then((r) =>
 		r.json(),
 	);
 
@@ -18,7 +18,11 @@ interface UseUserParams {
 
 export function useUser({ redirectTo, redirectIfFound }: UseUserParams = {}) {
 	const [userId] = useLocalStorage({ key: 'userId', defaultValue: '' });
-	const { data: user, error } = useSWR<User>(`/v1/users/${userId}`, fetcher);
+	const {
+		data: user,
+		error,
+		mutate: mutateUser,
+	} = useSWR<User>(userId, fetcher);
 	const router = useRouter();
 	const finished = Boolean(user);
 	const hasUser = Boolean(user?.id);
@@ -34,5 +38,5 @@ export function useUser({ redirectTo, redirectIfFound }: UseUserParams = {}) {
 		}
 	}, [redirectTo, redirectIfFound, finished, hasUser, router]);
 
-	return error ? null : user;
+	return error ? null : { user, mutateUser };
 }

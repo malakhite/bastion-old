@@ -2,7 +2,7 @@ import { Title } from '@mantine/core';
 import { useUser } from '../../lib/hooks';
 
 export function AdminIndex() {
-	const user = useUser({ redirectTo: '/login' });
+	const { user } = useUser({ redirectTo: '/login' });
 
 	return (
 		<div>
