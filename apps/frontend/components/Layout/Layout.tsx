@@ -2,23 +2,56 @@ import { useState } from 'react';
 import {
 	ActionIcon,
 	AppShell,
+	Avatar,
 	Burger,
+	createStyles,
+	Group,
 	Header,
 	MediaQuery,
+	Menu,
 	Navbar,
 	Text,
+	UnstyledButton,
 	useMantineColorScheme,
 	useMantineTheme,
 } from '@mantine/core';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMoon, faSun } from '@fortawesome/free-solid-svg-icons';
 import Logo from '../Logo';
+import { useUser } from '../../lib/hooks';
+
+const useStyles = createStyles((theme) => ({
+	user: {
+		color:
+			theme.colorScheme === 'dark' ? theme.colors.dark[0] : theme.black,
+		padding: `${theme.spacing.xs}px ${theme.spacing.sm}px`,
+		borderRadius: theme.radius.sm,
+		transition: 'background-color 100ms ease',
+
+		'&:hover': {
+			backgroundColor:
+				theme.colorScheme === 'dark'
+					? theme.colors.dark[8]
+					: theme.white,
+		},
+	},
+	userActive: {
+		backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[8] : theme.white,
+	},
+	userMenu: {
+		[theme.fn.smallerThan('xs')]: { display: 'none' },
+	},
+}));
 
 function Layout({ children }) {
-	const [opened, setOpened] = useState(false);
+	const { classes, cx } = useStyles();
+	const [hamburgerOpened, setHamburgerOpened] = useState(false);
+	const [userMenuOpened, setUserMenuOpened] = useState(false);
 	const { colorScheme, toggleColorScheme } = useMantineColorScheme();
 	const dark = colorScheme === 'dark';
 	const theme = useMantineTheme();
+
+	const { user } = useUser();
 
 	return (
 		<AppShell
@@ -40,7 +73,7 @@ function Layout({ children }) {
 					// Breakpoint at which navbar will be hidden if hidden prop is true
 					hiddenBreakpoint="sm"
 					// Hides navbar when viewport size is less than value specified in hiddenBreakpoint
-					hidden={!opened}
+					hidden={!hamburgerOpened}
 					// when viewport size is less than theme.breakpoints.sm navbar width is 100%
 					// viewport size > theme.breakpoints.sm – width is 300px
 					// viewport size > theme.breakpoints.lg – width is 400px
@@ -66,8 +99,8 @@ function Layout({ children }) {
 						>
 							<Burger
 								aria-label="open menu"
-								opened={opened}
-								onClick={() => setOpened((o) => !o)}
+								opened={hamburgerOpened}
+								onClick={() => setHamburgerOpened((o) => !o)}
 								size="sm"
 								color={theme.colors.gray[6]}
 								mr="xl"
@@ -76,18 +109,36 @@ function Layout({ children }) {
 
 						<Logo />
 
-						<ActionIcon
-							variant="outline"
-							color={dark ? 'yellow' : 'blue'}
-							onClick={() => toggleColorScheme()}
-							title="Toggle color scheme"
-						>
-							{dark ? (
-								<FontAwesomeIcon icon={faSun} />
-							) : (
-								<FontAwesomeIcon icon={faMoon} />
-							)}
-						</ActionIcon>
+						<Group>
+							<Menu
+								size={260}
+								transition="pop-top-right"
+								className={classes.userMenu}
+								onClose={() => setUserMenuOpened(false)}
+								onOpen={() => setUserMenuOpened(true)}
+								control={
+									<UnstyledButton className={cx(classes.user, { [classes.userActive]: userMenuOpened })} >
+										<Group spacing={7}>
+											<Avatar src={null} alt={user.name}>{user.image ? null : user.name.slice(0, 1)}</Avatar>
+											<Text weight={500} size="sm" sx={{ lineHeight: 1 }} mr={3} >{user.name}</Text>
+											<ChevronDown
+										</Group>
+									</UnstyledButton>
+								}
+							></Menu>
+							<ActionIcon
+								variant="outline"
+								color={dark ? 'yellow' : 'blue'}
+								onClick={() => toggleColorScheme()}
+								title="Toggle color scheme"
+							>
+								{dark ? (
+									<FontAwesomeIcon icon={faSun} />
+								) : (
+									<FontAwesomeIcon icon={faMoon} />
+								)}
+							</ActionIcon>
+						</Group>
 					</div>
 				</Header>
 			}
