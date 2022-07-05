@@ -1,0 +1,8 @@
+-- AlterTable
+ALTER TABLE "Post" ADD COLUMN     "created_at" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP;
+
+-- AlterTable
+ALTER TABLE "sessions" ALTER COLUMN "expires" SET DATA TYPE TIMESTAMPTZ;
+
+-- AlterTable
+ALTER TABLE "verification_tokens" ALTER COLUMN "expires" SET DATA TYPE TIMESTAMPTZ;
