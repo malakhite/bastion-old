@@ -8,6 +8,9 @@ import type { NextPage } from 'next';
 import type { AppProps } from 'next/app';
 import type { Session } from 'next-auth';
 import type { ReactElement, ReactNode } from 'react';
+import Layout from '../components/layout';
+import { useRouter } from 'next/router';
+import AdminLayout from '../components/admin/layout';
 
 const clientSideEmotionCache = createEmotionCache();
 
@@ -29,8 +32,18 @@ function App({
 	emotionCache = clientSideEmotionCache,
 	pageProps: { session, ...pageProps },
 }: AppPropsWithLayout) {
-	const getLayout = Component.getLayout ?? ((page) => page);
-	return getLayout(
+	const router = useRouter();
+
+	const getLayout =
+		Component.getLayout ??
+		((page) => {
+			if (router.pathname.startsWith('/admin')) {
+				return <AdminLayout>{page}</AdminLayout>;
+			}
+			return <Layout>{page}</Layout>;
+		});
+
+	return (
 		<SessionProvider session={session}>
 			<CacheProvider value={emotionCache}>
 				<Head>
@@ -41,10 +54,10 @@ function App({
 				</Head>
 				<ThemeProvider theme={light}>
 					<CssBaseline />
-					<Component {...pageProps} />
+					{getLayout(<Component {...pageProps} />)}
 				</ThemeProvider>
 			</CacheProvider>
-		</SessionProvider>,
+		</SessionProvider>
 	);
 }
 
