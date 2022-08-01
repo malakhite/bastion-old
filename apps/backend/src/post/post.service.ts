@@ -1,6 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { LessThanOrEqual, Repository } from 'typeorm';
+import { HashidService } from '../common/hashid.service';
 import { ImageService } from '../images/images.service';
 import { UserService } from '../user/user.service';
 import { CreatePostDto } from './dto/create-post.dto';
@@ -17,6 +18,7 @@ export class PostService {
 		@InjectRepository(PostRevision)
 		private postRevisionRepository: Repository<PostRevision>,
 		private userService: UserService,
+		private hashidService: HashidService,
 	) {}
 
 	async create(createPostDto: CreatePostDto): Promise<Post> {
@@ -72,11 +74,16 @@ export class PostService {
 		});
 	}
 
-	async findOne(id: string): Promise<Post | null> {
+	async findOne(hashedId: string): Promise<Post | null> {
+		const id = this.hashidService.decode(hashedId);
 		return await this.postRepository.findOne({ where: { id } });
 	}
 
-	async update(id: string, updatePostDto: UpdatePostDto): Promise<Post> {
+	async update(
+		hashedId: string,
+		updatePostDto: UpdatePostDto,
+	): Promise<Post> {
+		const id = this.hashidService.decode(hashedId);
 		const post = await this.postRepository.findOne({ where: { id } });
 		if (post && post.revisions.length > 0) {
 			const { id: revisionId, ...latestRevision } =
@@ -94,7 +101,8 @@ export class PostService {
 		}
 	}
 
-	async remove(id: string): Promise<void> {
+	async remove(hashedId: string): Promise<void> {
+		const id = this.hashidService.decode(hashedId);
 		const result = await this.postRepository.softDelete(id);
 		if (result.affected === 0) {
 			throw new BadRequestException(`Post with id ${id} not found`);

@@ -3,8 +3,7 @@ import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity('pulsepoint_agency_types')
 export class PulsePointAgencyType {
-	@IsInt()
-	@PrimaryGeneratedColumn()
+	@PrimaryGeneratedColumn('identity')
 	id!: number;
 
 	@Column({ type: 'text', unique: true })

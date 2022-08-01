@@ -18,3 +18,5 @@ export const IMAGE_VARIANT_TYPES: ImageVariantType[] = [
 			'A smaller variant for previews and thumbnails.',
 	},
 ];
+
+export const HASHID_DEFAULT_LENGTH = 10;

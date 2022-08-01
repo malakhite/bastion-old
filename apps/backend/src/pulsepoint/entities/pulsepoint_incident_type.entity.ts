@@ -2,7 +2,7 @@ import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity({ name: 'pulsepoint_incident_types' })
 export class PulsePointIncidentType {
-	@PrimaryGeneratedColumn()
+	@PrimaryGeneratedColumn('identity')
 	id!: number;
 
 	@Column({ type: 'text', unique: true })

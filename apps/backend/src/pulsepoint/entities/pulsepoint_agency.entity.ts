@@ -18,9 +18,8 @@ import { PulsePointMedia } from './pulsepoint_media.entity';
 
 @Entity('pulsepoint_agencies')
 export class PulsePointAgency {
-	@IsUUID()
-	@PrimaryGeneratedColumn('uuid')
-	id!: string;
+	@PrimaryGeneratedColumn('identity')
+	id!: number;
 
 	@Column({ type: 'integer', unique: true })
 	pulsepoint_id!: number;

@@ -1,7 +1,8 @@
 import { Injectable, Logger, OnApplicationBootstrap } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { genNanoId } from '../util';
+import { HashidService } from '../common/hashid.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { Role, User } from './entities/user.entity';
@@ -13,6 +14,8 @@ export class UserService implements OnApplicationBootstrap {
 	constructor(
 		@InjectRepository(User)
 		private userRepository: Repository<User>,
+		private configService: ConfigService,
+		private hashidService: HashidService,
 	) {}
 
 	async create(createUserDto: CreateUserDto): Promise<User> {
@@ -28,7 +31,8 @@ export class UserService implements OnApplicationBootstrap {
 		return await this.userRepository.find();
 	}
 
-	async findOne(id: string): Promise<User> {
+	async findOne(hashedId: string): Promise<User> {
+		const id = this.hashidService.decode(hashedId);
 		return await this.userRepository.findOneOrFail({ where: { id } });
 	}
 
@@ -36,7 +40,11 @@ export class UserService implements OnApplicationBootstrap {
 		return await this.userRepository.findOne({ where: { email } });
 	}
 
-	async update(id: string, updateUserDto: UpdateUserDto): Promise<User> {
+	async update(
+		hashedId: string,
+		updateUserDto: UpdateUserDto,
+	): Promise<User> {
+		const id = this.hashidService.decode(hashedId);
 		const userToUpdate = await this.userRepository.findOneOrFail({
 			where: { id },
 		});
@@ -57,15 +65,23 @@ export class UserService implements OnApplicationBootstrap {
 		const storedUsers = await this.userRepository.count();
 		if (storedUsers === 0) {
 			this.logger.log('No users stored. Adding owner.');
-			const defaultAdmin = new User({
-				id: await genNanoId(),
-				email: process.env.ADMIN_EMAIL,
-				name: process.env.ADMIN_NAME,
-				password: process.env.ADMIN_PASSWORD,
-				is_active: true,
-				role: Role.OWNER,
-			});
-			await this.userRepository.save(defaultAdmin);
+			const email = this.configService.get<string>('ADMIN_EMAIL');
+			const name = this.configService.get<string>('ADMIN_NAME');
+			const password = this.configService.get<string>('ADMIN_PASSWORD');
+
+			if (!email || !name || !password) {
+				throw new Error(
+					'`ADMIN_EMAIL`, `ADMIN_NAME`, and `ADMIN_PASSWORD` must be set when starting the application for the first time.',
+				);
+			}
+
+			const defaultAdmin = new User();
+			(defaultAdmin.email = email),
+				(defaultAdmin.name = name),
+				(defaultAdmin.password = password),
+				(defaultAdmin.is_active = true),
+				(defaultAdmin.role = Role.OWNER),
+				await this.userRepository.save(defaultAdmin);
 		}
 	}
 }

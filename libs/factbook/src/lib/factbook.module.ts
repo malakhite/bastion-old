@@ -3,13 +3,13 @@ import { HttpModule } from '@nestjs/axios';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { FactbookService } from './factbook.service';
 import { FactbookCrudService } from './factbook-crud.service';
+import { FactbookCountry } from './entities/country.entity';
 import {
 	FactbookCategory,
-	FactbookCountry,
 	FactbookField,
 	FactbookFieldType,
-	FactbookRegion,
-} from './entities';
+} from './entities/field.entity';
+import { FactbookRegion } from './entities/region.entity';
 
 @Module({
 	controllers: [],

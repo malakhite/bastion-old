@@ -1,5 +1,5 @@
 import { Exclude } from 'class-transformer';
-import { IsDate, IsUUID } from 'class-validator';
+import { IsDate } from 'class-validator';
 import {
 	Column,
 	CreateDateColumn,
@@ -22,9 +22,8 @@ import { FactbookRegion } from './region.entity';
 	},
 })
 export class FactbookCountry {
-	@IsUUID()
-	@PrimaryGeneratedColumn('uuid')
-	id!: string;
+	@PrimaryGeneratedColumn('identity')
+	id!: number;
 
 	@IsDate()
 	@CreateDateColumn({ type: 'timestamptz' })

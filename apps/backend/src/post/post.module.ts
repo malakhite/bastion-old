@@ -7,6 +7,7 @@ import { UserModule } from '../user/user.module';
 import { PostCategory } from './entities/category.entity';
 import { PostRevision } from './entities/post-revision.entity';
 import { ImageModule } from '../images/images.module';
+import { UtilsModule } from '../common/utils.module';
 
 @Module({
 	controllers: [PostController],
@@ -15,6 +16,7 @@ import { ImageModule } from '../images/images.module';
 		ImageModule,
 		TypeOrmModule.forFeature([Post, PostCategory, PostRevision]),
 		UserModule,
+		UtilsModule,
 	],
 	providers: [PostService],
 })

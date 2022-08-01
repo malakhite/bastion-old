@@ -1,6 +1,5 @@
 import { IsDate } from 'class-validator';
 import {
-	BeforeInsert,
 	Column,
 	CreateDateColumn,
 	DeleteDateColumn,
@@ -9,11 +8,10 @@ import {
 	JoinColumn,
 	OneToMany,
 	ManyToOne,
-	PrimaryColumn,
 	UpdateDateColumn,
+	PrimaryGeneratedColumn,
 } from 'typeorm';
 import { User } from '../../user/entities/user.entity';
-import { genNanoId } from '../../util';
 import { PostRevision } from './post-revision.entity';
 
 @Entity({
@@ -23,8 +21,8 @@ import { PostRevision } from './post-revision.entity';
 	},
 })
 export class Post {
-	@PrimaryColumn({ type: 'text' })
-	id!: string;
+	@PrimaryGeneratedColumn('identity')
+	id!: number;
 
 	@Column({
 		type: 'text',
@@ -59,9 +57,4 @@ export class Post {
 	@IsDate()
 	@DeleteDateColumn({ type: 'timestamptz', nullable: true })
 	deleted_at!: Date | null;
-
-	@BeforeInsert()
-	async addNanoId() {
-		this.id = await genNanoId();
-	}
 }

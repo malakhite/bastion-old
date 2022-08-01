@@ -10,7 +10,7 @@ import { FactbookCountry } from './country.entity';
 
 @Entity({ name: 'factbook_categories' })
 export class FactbookCategory {
-	@PrimaryGeneratedColumn()
+	@PrimaryGeneratedColumn('identity')
 	id!: number;
 
 	@Column({ type: 'text' })
@@ -22,7 +22,7 @@ export class FactbookCategory {
 
 @Entity({ name: 'factbook_field_types' })
 export class FactbookFieldType {
-	@PrimaryGeneratedColumn()
+	@PrimaryGeneratedColumn('identity')
 	id!: number;
 
 	// Originally used this as the primary key, but the source data occasionally
@@ -46,8 +46,8 @@ export class FactbookFieldType {
 
 @Entity({ name: 'factbook_fields' })
 export class FactbookField {
-	@PrimaryGeneratedColumn('uuid')
-	id!: string;
+	@PrimaryGeneratedColumn('identity')
+	id!: number;
 
 	@ManyToOne(() => FactbookFieldType)
 	@JoinColumn({ name: 'field_type_id' })

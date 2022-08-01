@@ -9,8 +9,8 @@ import { PulsePointAgency } from './pulsepoint_agency.entity';
 
 @Entity({ name: 'pulsepoint_units' })
 export class PulsePointUnit {
-	@PrimaryGeneratedColumn('uuid')
-	id!: string;
+	@PrimaryGeneratedColumn('identity')
+	id!: number;
 
 	@Column({ type: 'text' })
 	designator!: string;

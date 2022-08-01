@@ -9,6 +9,7 @@ import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
 import { lastValueFrom } from 'rxjs';
 import { Repository } from 'typeorm';
+import { HashidService } from '../common/hashid.service';
 import { IMAGE_VARIANT_TYPES } from '../config/constants';
 import { UserService } from '../user/user.service';
 import { CreateImageDto } from './dto/create-image.dto';

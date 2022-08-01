@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { FactbookCountry } from './entities';
+import { FactbookCountry } from './entities/country.entity';
 
 @Injectable()
 export class FactbookCrudService {
@@ -14,7 +14,7 @@ export class FactbookCrudService {
 		return this.countryRepository.find();
 	}
 
-	public async findOneById(id: string) {
+	public async findOneById(id: number) {
 		return this.countryRepository.find({
 			where: { id },
 			relations: [

@@ -1,18 +1,14 @@
-/* eslint-disable @typescript-eslint/no-inferrable-types */
 import * as argon2 from 'argon2';
 import { Exclude } from 'class-transformer';
 import { IsBoolean, IsDate, IsEmail, IsEnum } from 'class-validator';
 import {
-	BeforeInsert,
-	BeforeUpdate,
 	Column,
 	CreateDateColumn,
 	DeleteDateColumn,
 	Entity,
-	PrimaryColumn,
+	PrimaryGeneratedColumn,
 	UpdateDateColumn,
 } from 'typeorm';
-import { genNanoId } from '../../util';
 
 export enum Role {
 	OWNER = 'owner',
@@ -29,8 +25,8 @@ export enum Role {
 	},
 })
 export class User {
-	@PrimaryColumn({ type: 'text' })
-	id!: string;
+	@PrimaryGeneratedColumn('identity')
+	id!: number;
 
 	@IsEmail()
 	@Column({
@@ -47,7 +43,18 @@ export class User {
 	name!: string;
 
 	@Exclude()
-	@Column({ type: 'text' })
+	@Column({
+		type: 'text',
+		transformer: {
+			to: async (value: string) => {
+				if (!value.startsWith('$argon2id$')) {
+					return await argon2.hash(value);
+				}
+				return value;
+			},
+			from: (value: string) => value,
+		},
+	})
 	password!: string;
 
 	@IsBoolean()
@@ -74,27 +81,4 @@ export class User {
 	@IsDate()
 	@DeleteDateColumn({ type: 'timestamptz', nullable: true })
 	deleted_at?: Date | null;
-
-	@BeforeInsert()
-	async addNanoId() {
-		this.id = await genNanoId();
-	}
-
-	@BeforeInsert()
-	async hashPassword(password = this.password) {
-		if (password) {
-			this.password = await argon2.hash(password);
-		}
-	}
-
-	@BeforeUpdate()
-	async checkPassword(password = this.password) {
-		if (password && !password.startsWith('$argon2')) {
-			this.password = await argon2.hash(password);
-		}
-	}
-
-	constructor(partial: Partial<User>) {
-		Object.assign(this, partial);
-	}
 }

@@ -20,8 +20,8 @@ import { Post } from './post.entity';
 	},
 })
 export class PostRevision {
-	@PrimaryGeneratedColumn('uuid')
-	id!: string;
+	@PrimaryGeneratedColumn('identity')
+	id!: number;
 
 	@Column({ type: 'text' })
 	title!: string;

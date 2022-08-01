@@ -2,7 +2,7 @@ import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity({ name: 'post_categories' })
 export class PostCategory {
-	@PrimaryGeneratedColumn()
+	@PrimaryGeneratedColumn('identity')
 	id!: number;
 
 	@Column({ type: 'text' })
