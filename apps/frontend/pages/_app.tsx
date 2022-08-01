@@ -1,13 +1,35 @@
-import '../styles/globals.css';
-import type { AppProps } from 'next/app';
 import Head from 'next/head';
 import { MantineProvider } from '@mantine/core';
 
-function MyApp({ Component, pageProps }: AppProps) {
-	return (
+import type { NextPage } from 'next';
+import type { AppProps } from 'next/app';
+import type { ReactElement, ReactNode } from 'react';
+import Layout from '../components/base/layout';
+import { BASE_TITLE } from '../constants';
+
+export type NextPageWithLayout = NextPage & {
+	getLayout?: (page: ReactElement) => ReactNode;
+};
+
+type AppPropsWithLayout = AppProps & {
+	Component: NextPageWithLayout;
+};
+
+function MyApp({ Component, pageProps }: AppPropsWithLayout) {
+	return Component.getLayout ? (
+		Component.getLayout(
+			<MantineProvider
+				withGlobalStyles
+				withNormalizeCSS
+				theme={{ colorScheme: 'light' }}
+			>
+				<Component {...pageProps} />
+			</MantineProvider>,
+		)
+	) : (
 		<>
 			<Head>
-				<title>scottabbey.com</title>
+				<title>{BASE_TITLE}</title>
 				<meta
 					name="viewport"
 					content="minimum-scale=1, initial-scale=1, width=device-width"
@@ -19,7 +41,9 @@ function MyApp({ Component, pageProps }: AppProps) {
 				withNormalizeCSS
 				theme={{ colorScheme: 'light' }}
 			>
-				<Component {...pageProps} />
+				<Layout>
+					<Component {...pageProps} />
+				</Layout>
 			</MantineProvider>
 		</>
 	);
