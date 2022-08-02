@@ -4,5 +4,5 @@ export class UpdateImageDto {
 	alt_text?: string;
 	height?: string;
 	width?: string;
-	owner_id?: string;
+	owner_id?: number;
 }

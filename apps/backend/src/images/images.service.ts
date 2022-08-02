@@ -73,7 +73,9 @@ export class ImageService implements OnApplicationBootstrap {
 				`Unable to upload image: ${data.errors}`,
 			);
 		}
-		const owner = await this.userService.findOne(createImageDto.owner_id);
+		const owner = await this.userService.findOneById(
+			createImageDto.owner_id,
+		);
 		const variants: ImageVariant[] = await Promise.all(
 			data.result.variants.map(async (dataVariant) => {
 				const variant = new ImageVariant();

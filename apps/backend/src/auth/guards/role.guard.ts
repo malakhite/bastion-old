@@ -32,7 +32,7 @@ export class RoleGuard implements CanActivate {
 		}
 
 		const request = context.switchToHttp().getRequest<IRequestWithUser>();
-		const user = await this.userService.findOne(request.user.id);
+		const user = await this.userService.findOneById(request.user.id);
 		this.logger.log(user);
 
 		if (

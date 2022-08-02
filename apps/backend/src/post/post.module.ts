@@ -16,7 +16,6 @@ import { UtilsModule } from '../common/utils.module';
 		ImageModule,
 		TypeOrmModule.forFeature([Post, PostCategory, PostRevision]),
 		UserModule,
-		UtilsModule,
 	],
 	providers: [PostService],
 })

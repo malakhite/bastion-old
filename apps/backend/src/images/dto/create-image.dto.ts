@@ -3,5 +3,5 @@ export class CreateImageDto {
 	alt_text?: string;
 	height?: number;
 	width?: number;
-	owner_id!: string;
+	owner_id!: number;
 }

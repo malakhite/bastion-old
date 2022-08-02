@@ -1,7 +1,6 @@
 import { z } from 'zod';
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { HASHID_DEFAULT_LENGTH } from './constants';
 
 const schema = z.object({
 	NODE_ENV: z.string().default('development'),
@@ -17,14 +16,10 @@ const schema = z.object({
 		return parsed;
 	}),
 	DATABASE_URL: z.string().url(),
-	SYNCRHONIZE_DB: z.boolean().default(false),
-	ACCESS_TOKEN_EXPIRATION: z.string(),
-	ACCESS_TOKEN_SECRET: z.string(),
-	HASHID_SALT: z.string(),
-	HASHID_MIN_LENGTH: z.string().transform((val, ctx) => {
-		if (!val) {
-			return HASHID_DEFAULT_LENGTH;
-		}
+	SYNCRHONIZE_DB: z.string().transform((val) => {
+		return val === 'true';
+	}),
+	SESSION_TTL: z.string().transform((val, ctx) => {
 		const parsed = Number.parseInt(val, 10);
 		if (Number.isNaN(parsed)) {
 			ctx.addIssue({
@@ -32,8 +27,12 @@ const schema = z.object({
 				message: 'Not a number',
 			});
 		}
-		return parsed;
+		return parsed * 1000;
 	}),
+	SESSION_SECRET: z.string(),
+	CF_IMAGES_KEY: z.string(),
+	CF_IMAGES_ID: z.string(),
+	CF_IMAGES_DELIVERY_ID: z.string(),
 });
 
 @Module({

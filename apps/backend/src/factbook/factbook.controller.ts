@@ -23,7 +23,7 @@ export class FactbookController {
 	}
 
 	@Get('country/:id')
-	async findById(@Param('id') id: string) {
+	async findById(@Param('id') id: number) {
 		return await this.factbookService.findOneById(id);
 	}
 }

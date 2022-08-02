@@ -1,3 +1,3 @@
 export class JWTData {
-	sub!: string;
+	sub!: number;
 }

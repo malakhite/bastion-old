@@ -20,3 +20,5 @@ export const IMAGE_VARIANT_TYPES: ImageVariantType[] = [
 ];
 
 export const HASHID_DEFAULT_LENGTH = 10;
+
+export const BASTION_SESSION = 'bastion-session';

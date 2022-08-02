@@ -43,18 +43,7 @@ export class User {
 	name!: string;
 
 	@Exclude()
-	@Column({
-		type: 'text',
-		transformer: {
-			to: async (value: string) => {
-				if (!value.startsWith('$argon2id$')) {
-					return await argon2.hash(value);
-				}
-				return value;
-			},
-			from: (value: string) => value,
-		},
-	})
+	@Column({ type: 'text' })
 	password!: string;
 
 	@IsBoolean()

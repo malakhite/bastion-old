@@ -13,10 +13,7 @@ import { readFileSync } from 'fs';
 					type: 'postgres',
 					url: configService.get('DATABASE_URL'),
 					autoLoadEntities: true,
-					synchronize: Boolean(configService.get('SYNCHRONIZE_DB')),
-					ssl: {
-						ca: readFileSync('./bastion-do.crt').toString(),
-					},
+					synchronize: configService.get<boolean>('SYNCHRONIZE_DB'),
 				};
 			},
 		}),

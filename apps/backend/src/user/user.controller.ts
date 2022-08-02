@@ -7,7 +7,6 @@ import {
 	Param,
 	Delete,
 	NotFoundException,
-	Query,
 	UseInterceptors,
 	ClassSerializerInterceptor,
 	UseGuards,
@@ -20,48 +19,41 @@ import { Role } from './entities/user.entity';
 import { Roles } from '../auth/decorators/roles.decorator';
 
 @UseInterceptors(ClassSerializerInterceptor)
-@UseGuards(SessionGuard)
-@Roles(Role.ADMIN)
 @Controller({ path: 'users', version: '1' })
 export class UserController {
 	constructor(private readonly userService: UserService) {}
 
+	@UseGuards(SessionGuard)
+	@Roles(Role.ADMIN)
 	@Post()
 	async create(@Body() createUserDto: CreateUserDto) {
 		return await this.userService.create(createUserDto);
 	}
 
 	@Get()
-	async findAll(@Query('email') email?: string) {
-		if (email) {
-			const user = await this.userService.findOneByEmail(email);
-			if (user) {
-				return user;
-			}
-			throw new NotFoundException(`User with email '${email}' not found`);
-		}
+	async findAll() {
 		return await this.userService.findAll();
 	}
 
-	@Get(':id')
-	async findOne(@Param('id') id: string) {
-		const user = await this.userService.findOne(id);
-		if (user) {
-			return user;
-		}
-		throw new NotFoundException(`User with id '${id}' not found`);
+	@Get(':email')
+	async findOne(@Param('email') email: string) {
+		return await this.userService.findOneByEmail(email);
 	}
 
-	@Patch(':id')
+	@UseGuards(SessionGuard)
+	@Roles(Role.ADMIN)
+	@Patch(':email')
 	async update(
-		@Param('id') id: string,
+		@Param('email') email: string,
 		@Body() updateUserDto: UpdateUserDto,
 	) {
-		return await this.userService.update(id, updateUserDto);
+		return await this.userService.update(email, updateUserDto);
 	}
 
-	@Delete(':id')
-	async remove(@Param('id') id: string) {
-		return await this.userService.remove(id);
+	@UseGuards(SessionGuard)
+	@Roles(Role.ADMIN)
+	@Delete(':email')
+	async remove(@Param('email') email: string) {
+		return await this.userService.remove(email);
 	}
 }

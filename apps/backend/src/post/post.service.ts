@@ -1,7 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { LessThanOrEqual, Repository } from 'typeorm';
-import { HashidService } from '../common/hashid.service';
 import { ImageService } from '../images/images.service';
 import { UserService } from '../user/user.service';
 import { CreatePostDto } from './dto/create-post.dto';
@@ -18,7 +17,6 @@ export class PostService {
 		@InjectRepository(PostRevision)
 		private postRevisionRepository: Repository<PostRevision>,
 		private userService: UserService,
-		private hashidService: HashidService,
 	) {}
 
 	async create(createPostDto: CreatePostDto): Promise<Post> {
@@ -27,7 +25,9 @@ export class PostService {
 			createPostDto,
 		);
 
-		const author = await this.userService.findOne(createPostDto.author_id);
+		const author = await this.userService.findOneById(
+			createPostDto.author_id,
+		);
 
 		if (author) {
 			postRevision.author = author;
@@ -74,17 +74,12 @@ export class PostService {
 		});
 	}
 
-	async findOne(hashedId: string): Promise<Post | null> {
-		const id = this.hashidService.decode(hashedId);
-		return await this.postRepository.findOne({ where: { id } });
+	async findOne(slug: string): Promise<Post | null> {
+		return await this.postRepository.findOne({ where: { slug } });
 	}
 
-	async update(
-		hashedId: string,
-		updatePostDto: UpdatePostDto,
-	): Promise<Post> {
-		const id = this.hashidService.decode(hashedId);
-		const post = await this.postRepository.findOne({ where: { id } });
+	async update(slug: string, updatePostDto: UpdatePostDto): Promise<Post> {
+		const post = await this.postRepository.findOne({ where: { slug } });
 		if (post && post.revisions.length > 0) {
 			const { id: revisionId, ...latestRevision } =
 				post.revisions[post.revisions.length - 1];
@@ -97,15 +92,14 @@ export class PostService {
 			post.revisions.push(newRevision);
 			return this.postRepository.save(post);
 		} else {
-			throw new BadRequestException(`Post with id ${id} not found`);
+			throw new BadRequestException(`Post with slug '${slug}' not found`);
 		}
 	}
 
-	async remove(hashedId: string): Promise<void> {
-		const id = this.hashidService.decode(hashedId);
-		const result = await this.postRepository.softDelete(id);
+	async remove(slug: string): Promise<void> {
+		const result = await this.postRepository.softDelete({ slug });
 		if (result.affected === 0) {
-			throw new BadRequestException(`Post with id ${id} not found`);
+			throw new BadRequestException(`Post with slug '${slug}' not found`);
 		}
 	}
 }

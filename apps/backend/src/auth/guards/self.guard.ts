@@ -4,21 +4,20 @@ import {
 	ForbiddenException,
 	Injectable,
 } from '@nestjs/common';
-import type { Request } from 'express';
-import { JWTData } from '../dto/jwt-data.dto';
 import { UserService } from '../../user/user.service';
 import { Role } from '../../user/entities/user.entity';
+import { IRequestWithUser } from '../interfaces';
 
 @Injectable()
 export class SelfGuard implements CanActivate {
 	constructor(private userService: UserService) {}
 
 	async canActivate(context: ExecutionContext): Promise<boolean> {
-		const request: Request & { user: JWTData } = context
+		const request = context
 			.switchToHttp()
-			.getRequest();
+			.getRequest<IRequestWithUser & { params: { id: number } }>();
 
-		const user = await this.userService.findOne(request.user.sub);
+		const user = await this.userService.findOneById(request.user.id);
 
 		if (
 			user &&

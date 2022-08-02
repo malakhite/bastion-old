@@ -1,10 +1,14 @@
+// eslint-disable @typescript-eslint/no-non-null-assertion
 import { ValidationPipe, VersioningType } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
-import * as session from 'express-session';
-import * as passport from 'passport';
-import { Logger } from 'nestjs-pino';
+import session from 'express-session';
+import passport from 'passport';
+import { Logger, LoggerErrorInterceptor } from 'nestjs-pino';
 
 import { AppModule } from './app/app.module';
+import { ConfigService } from '@nestjs/config';
+import { BASTION_SESSION } from './config/constants';
+import { SessionService } from './auth/session.service';
 
 async function bootstrap() {
 	const app = await NestFactory.create(AppModule, {
@@ -12,12 +16,25 @@ async function bootstrap() {
 		cors: { origin: true },
 	});
 
+	const configService = app.get(ConfigService);
+	const typeormStore = app.get(SessionService).getTypeormStore();
+
 	app.use(
 		session({
-			// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-			secret: process.env.ACCESS_TOKEN_SECRET!,
+			name: BASTION_SESSION,
+			secret: configService.get<string>('SESSION_SECRET')!,
+			cookie: {
+				maxAge:
+					Number.parseInt(
+						configService.get<string>('SESSION_TTL')!,
+						10,
+					) * 1000,
+				sameSite: 'lax',
+				secure: configService.get<string>('NODE_ENV') === 'production',
+			},
 			resave: false,
-			saveUninitialized: false,
+			saveUninitialized: true,
+			store: typeormStore,
 		}),
 	);
 	app.use(passport.initialize());
@@ -28,12 +45,11 @@ async function bootstrap() {
 	app.enableVersioning({
 		type: VersioningType.URI,
 	});
+	app.useGlobalInterceptors(new LoggerErrorInterceptor());
 	app.useLogger(app.get(Logger));
 
-	// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-	const host = process.env.HOST!;
-	// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-	const port = Number.parseInt(process.env.PORT!, 10);
+	const host = configService.get<string>('HOST')!;
+	const port = configService.get<number>('PORT')!;
 	await app.listen(port, host);
 }
 

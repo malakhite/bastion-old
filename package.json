@@ -8,7 +8,9 @@
 		"test": "nx test",
 		"migration:create": "ts-node --transpile-only ./node_modules/typeorm/cli.js migration:create",
 		"migration:generate": "ts-node --transpile-only ./node_modules/typeorm/cli.js migration:generate",
-		"migration:revert": "ts-node --transpile-only ./node_modules/typeorm/cli.js migration:revert"
+		"migration:revert": "ts-node --transpile-only ./node_modules/typeorm/cli.js migration:revert",
+		"migration:run": "ts-node --transpile-only ./node_modules/typeorm/cli.js migration:run",
+		"typeorm": "typeorm-ts-node-commonjs"
 	},
 	"private": true,
 	"dependencies": {
@@ -44,6 +46,7 @@
 		"axios": "^0.26.0",
 		"class-transformer": "^0.5.1",
 		"class-validator": "^0.13.2",
+		"connect-typeorm": "^2.0.0",
 		"cookie": "^0.5.0",
 		"cookies": "^0.8.0",
 		"core-js": "^3.22.8",

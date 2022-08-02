@@ -1,7 +1,6 @@
 import { HttpModule } from '@nestjs/axios';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { UtilsModule } from '../common/utils.module';
 import { UserModule } from '../user/user.module';
 import { Image } from './entities/image.entity';
 import { ImageVariant } from './entities/image_variant.entity';
