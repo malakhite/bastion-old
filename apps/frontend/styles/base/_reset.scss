@@ -1,14 +1,34 @@
+*,
+::before,
+::after {
+	border-color: currentColor;
+	border-style: solid;
+	border-width: 0;
+	box-sizing: border-box;
+	margin: 0;
+	padding: 0;
+	vertical-align: baseline;
+}
+
+html, body {
+	height: 100%;
+}
+
 html {
 	-webkit-text-size-adjust: 100%;
 	font-family: var(--font-body);
+	font-size: 62.5%;
 	line-height: 1.5;
-	tab-size: 4;
 	scroll-behavior: smooth;
+	tab-size: 4;
 }
+
 body {
+	background-color: var(--color-background);
+	color: var(--color-on-background);
 	font-family: inherit;
+	font-size: 1.6rem;
 	line-height: inherit;
-	margin: 0;
 }
 
 h1,
@@ -19,44 +39,36 @@ h5 {
 	font-family: var(--font-display);
 }
 
-h1,
-h2,
-p,
-pre {
-	margin: 0;
-}
-*,
-::before,
-::after {
-	box-sizing: border-box;
-	border-width: 0;
-	border-style: solid;
-	border-color: currentColor;
-}
-h1,
-h2 {
-	font-size: inherit;
-	font-weight: inherit;
-}
 a {
 	color: inherit;
 	text-decoration: inherit;
 }
-pre {
-	font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
-		Liberation Mono, Courier New, monospace;
+
+img, picture, video, canvas, svg {
+	display: block;
+	max-width: 100%;
 }
+
+input, button, textarea, select {
+	font: inherit;
+}
+
+pre {
+	background-color: var(--color-surface-variant);
+	border-radius: 0.25rem;
+	color: var(--color-on-surface-variant);
+	font-family: var(--font-mono);
+	overflow: scroll;
+	padding: 0.5rem 0.75rem;
+}
+
 svg {
 	display: block;
 	shape-rendering: auto;
 	text-rendering: optimizeLegibility;
 }
-pre {
-	background-color: rgba(55, 65, 81, 1);
-	border-radius: 0.25rem;
-	color: rgba(229, 231, 235, 1);
-	font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
-		Liberation Mono, Courier New, monospace;
-	overflow: scroll;
-	padding: 0.5rem 0.75rem;
+
+table {
+	border-collapse: collapse;
+	border-spacing: 0;
 }

@@ -1,7 +1,13 @@
-$font-body: 'Noto Sans', sans-serif;
-$font-display: 'Noto Serif Display', serif;
+$font-body: 'Noto Serif', serif;
+$font-display: 'Noto Sans Display', sans-serif;
+$font-mono: 'Noto Sans Mono', monospace;
+
+$min-target: 48px;
 
 :root {
 	--font-body: #{$font-body};
 	--font-display: #{$font-display};
+	--font-mono: #{$font-mono};
+
+	--min-target: #{$min-target};
 }
