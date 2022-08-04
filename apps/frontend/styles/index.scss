@@ -1,5 +1,5 @@
-@import 'prelude';
-
-@import 'base/reset';
-
-@import 'themes/default';
+@use 'prelude';
+@use 'base/reset';
+@use 'abstracts/vars';
+@use 'abstracts/custom-props';
+@use 'themes/default';

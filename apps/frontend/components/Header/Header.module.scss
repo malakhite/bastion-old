@@ -1,37 +1,68 @@
-@import '../../styles/prelude';
+@use '../../styles/abstracts/vars' as v;
 
 .header {
 	align-items: center;
 	background-color: var(--color-surface);
+	border-bottom: 1px solid var(--color-outline);
 	color: var(--color-on-surface);
 	display: flex;
 	justify-content: space-between;
+	padding: 1rem;
+	position: sticky;
+	transform-style: preserve-3d;
 }
 
 .logo {
 	font-size: 3rem;
 	font-weight: 700;
-	padding: 1rem;
 }
 
 .linkContainer {
-	align-items: center;
+	align-items: flex-end;
 	display: flex;
+	flex-direction: column;
 	gap: 1rem;
+	position: absolute;
+	width: 90%;
+	top: -15rem;
+	transform: translateZ(-10px);
+
+	transition: top 0.5s cubic-bezier(0.77,0.2,0.05,1.0);
+
+	&[data-active=true] {
+		top: 7rem;
+	}
+
+	.link {
+		border-radius: 0.5rem;
+		font-family: var(--font-display);
+		font-size: 1.5rem;
+		font-weight: 700;
+		padding: 0.5rem 1rem;
+		transition: 220ms all ease-in-out
+	}
+	
+	a.link:hover,
+	a.link:active,
+	a.linkActive {
+		background-color: var(--color-primary-container);
+		color: var(--color-on-primary-container);
+	}
 }
 
-.link {
-	border-radius: 0.5rem;
-	font-family: var(--font-display);
-	font-size: 1.5rem;
-	font-weight: 700;
-	padding: 0.5rem 1rem;
-	transition: 220ms all ease-in-out
-}
 
-.link:hover,
-.link:active,
-.linkActive {
-	background-color: var(--color-primary-container);
-	color: var(--color-on-primary-container);
+@media only screen and (min-width: v.$screen-sm) {
+	.header {
+		transform-style: unset;
+	}
+
+	.linkContainer {
+		align-items: center;
+		flex-direction: row;
+		position: unset;
+		top: unset;
+		width: unset;
+
+		transform: unset;
+	}
 }

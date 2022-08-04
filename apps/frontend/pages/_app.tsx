@@ -1,9 +1,8 @@
 import { AppProps } from 'next/app';
 import Head from 'next/head';
-import { config } from '@fortawesome/fontawesome-svg-core';
-import '@fortawesome/fontawesome-svg-core/styles.css';
+import Layout from '../components/Layout/Layout';
 
-config.autoAddCss = false;
+import '../styles/index.scss';
 
 export default function CustomApp({ Component, pageProps }: AppProps) {
 	return (
@@ -11,9 +10,11 @@ export default function CustomApp({ Component, pageProps }: AppProps) {
 			<Head>
 				<title>scottabbey.com</title>
 			</Head>
-			<main className="app">
-				<Component {...pageProps} />
-			</main>
+			<Layout>
+				<main className="app">
+					<Component {...pageProps} />
+				</main>
+			</Layout>
 		</>
 	);
 }

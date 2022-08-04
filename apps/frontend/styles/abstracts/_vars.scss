@@ -4,10 +4,7 @@ $font-mono: 'Noto Sans Mono', monospace;
 
 $min-target: 48px;
 
-:root {
-	--font-body: #{$font-body};
-	--font-display: #{$font-display};
-	--font-mono: #{$font-mono};
-
-	--min-target: #{$min-target};
-}
+$screen-sm: 600px;
+$screen-md: 768px;
+$screen-lg: 992px;
+$screen-xl: 1200px;

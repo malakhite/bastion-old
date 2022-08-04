@@ -1,0 +1,57 @@
+@use '../../../styles/abstracts/vars' as v;
+
+.container {
+	align-items: center;
+	background-color: var(--color-background);
+	display: flex;
+	flex-direction: column;
+	gap: 5px;
+	height: var(--min-target);
+	justify-content: center;
+	width: var(--min-target);
+
+	
+
+	.top,
+	.middle,
+	.bottom {
+		width: 33px;
+		height: 4px;
+		position: relative;
+		background: var(--color-primary);
+		border-radius: 3px;
+	
+		transition: transform 0.5s cubic-bezier(0.77,0.2,0.05,1.0),
+			background 0.5s cubic-bezier(0.77,0.2,0.05,1.0),
+			opacity 0.55s ease;
+	}
+	
+	.top {
+		transform-origin: 0 0;
+	}
+	
+	.bottom {
+		transform-origin: 0% 100%;
+	}
+
+	&[data-active=true] {
+		.top {
+			transform: rotate(45deg) translate(3px,-6px);
+		}
+
+		.bottom {
+			transform: rotate(-45deg) translate(3px, 6px);
+		}
+
+		.middle {
+			opacity: 0;
+			transform: scale(0.2, 0.2);
+		}
+	}
+}
+
+@media only screen and (min-width: v.$screen-sm) {
+	.container {
+		display: none;
+	}
+}

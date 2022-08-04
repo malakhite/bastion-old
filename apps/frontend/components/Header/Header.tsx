@@ -1,10 +1,11 @@
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
+import HamburgerMenu from '../Button/Hamburger/Hamburger';
+
+import type { ReactEventHandler } from 'react';
 
 import styles from './Header.module.scss';
-
-interface HeaderProps {}
 
 const menuLinks = [
 	{
@@ -21,9 +22,20 @@ const menuLinks = [
 	},
 ];
 
-export default function Header({}: HeaderProps) {
+interface HeaderProps {
+	active: boolean;
+}
+
+export default function Header({ active }: HeaderProps) {
 	const router = useRouter();
 	const [activeLink, setActiveLink] = useState(router.pathname);
+	const [menuOpen, setMenuOpen] = useState(false);
+
+	const handleHamburgerClick: ReactEventHandler<HTMLButtonElement> = (
+		event,
+	) => {
+		setMenuOpen(!menuOpen);
+	};
 
 	useEffect(() => {
 		setActiveLink(router.pathname);
@@ -34,7 +46,8 @@ export default function Header({}: HeaderProps) {
 			<div>
 				<h1 className={styles.logo}>Scott Abbey</h1>
 			</div>
-			<div className={styles.linkContainer}>
+			<HamburgerMenu active={menuOpen} onClick={handleHamburgerClick} />
+			<div className={styles.linkContainer} data-active={menuOpen}>
 				{menuLinks.map((link) => (
 					<Link href={link.href} key={link.href}>
 						<a
