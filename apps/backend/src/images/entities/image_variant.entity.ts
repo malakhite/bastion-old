@@ -14,7 +14,7 @@ export class ImageVariant {
 	@PrimaryGeneratedColumn('identity')
 	id!: number;
 
-	@ManyToOne(() => ImageVariantType)
+	@ManyToOne(() => ImageVariantType, { eager: true })
 	@JoinColumn({ name: 'variant_type' })
 	variant!: ImageVariantType;
 

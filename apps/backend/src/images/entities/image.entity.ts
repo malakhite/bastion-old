@@ -38,6 +38,9 @@ export class Image {
 	@UpdateDateColumn({ type: 'timestamptz', nullable: true })
 	updated_at?: Date | null;
 
-	@OneToMany(() => ImageVariant, (variant) => variant.image)
+	@OneToMany(() => ImageVariant, (variant) => variant.image, {
+		eager: true,
+		cascade: true,
+	})
 	variants!: ImageVariant[];
 }

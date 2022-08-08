@@ -35,11 +35,14 @@ export class Post {
 	@Index({ unique: true })
 	slug!: string;
 
-	@ManyToOne(() => User)
+	@ManyToOne(() => User, { eager: true })
 	@JoinColumn({ name: 'author_id' })
 	author!: User;
 
-	@OneToMany(() => PostRevision, (revision) => revision.post)
+	@OneToMany(() => PostRevision, (revision) => revision.post, {
+		eager: true,
+		cascade: ['insert', 'update'],
+	})
 	revisions!: PostRevision[];
 
 	@IsDate()

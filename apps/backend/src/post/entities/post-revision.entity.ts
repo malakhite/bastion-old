@@ -30,10 +30,14 @@ export class PostRevision {
 	@JoinColumn({ name: 'post_id' })
 	post!: Post;
 
-	@ManyToOne(() => User)
+	@ManyToOne(() => User, { eager: true })
 	author!: User;
 
-	@ManyToOne(() => Image, { nullable: true })
+	@ManyToOne(() => Image, {
+		nullable: true,
+		eager: true,
+		cascade: ['insert', 'update'],
+	})
 	@JoinColumn({ name: 'hero_id' })
 	hero!: Image | null;
 
@@ -43,7 +47,10 @@ export class PostRevision {
 	@Column({ type: 'text' })
 	text!: string;
 
-	@ManyToMany(() => PostCategory)
+	@ManyToMany(() => PostCategory, {
+		eager: true,
+		cascade: ['insert', 'update'],
+	})
 	@JoinTable()
 	categories!: PostCategory[];
 

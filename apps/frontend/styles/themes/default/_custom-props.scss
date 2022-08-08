@@ -1,32 +1,4 @@
-$color-background: #fffbff;
-$color-on-background: #1c1b1e;
-
-$color-surface: #fffbff;
-$color-on-surface: #1c1b1e;
-$color-surface-variant: #e7e0eb;
-$color-on-surface-variant: #49454e;
-
-$color-outline: #7a757f;
-
-$color-primary: #6750a4;
-$color-on-primary: #ffdad6;
-$color-primary-container: #e9ddff;
-$color-on-primary-container: #22005d;
-
-$color-secondary: #625b71;
-$color-on-secondary: #ffffff;
-$color-secondary-container: #e8def8;
-$color-on-secondary-container: #1e192b;
-
-$color-tertiary: #7e5260;
-$color-on-tertiary: #ffffff;
-$color-tertiary-container: #ffd9e3;
-$color-on-tertiary-container:#31101d;
-
-$color-error: #ba1a1a;
-$color-on-error: #ffffff;
-$color-error-container: #ffdad6;
-$color-on-error-container: #410002;
+@use './vars' as *;
 
 :root {
 	--color-background: #{$color-background};
@@ -58,4 +30,10 @@ $color-on-error-container: #410002;
 	--color-on-error: #{$color-on-error};
 	--color-error-container: #{$color-error-container};
 	--color-on-error-container: #{$color-on-error-container};
+
+	--surface-1: #{$surface-1};
+	--surface-2: #{$surface-2};
+	--surface-3: #{$surface-3};
+	--surface-4: #{$surface-4};
+	--surface-5: #{$surface-5};
 }

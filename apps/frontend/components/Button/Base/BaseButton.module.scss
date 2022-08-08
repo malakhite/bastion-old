@@ -1,4 +1,4 @@
-@import '../../../styles/prelude';
+@use '../../../styles/themes/default/vars' as dv;
 
 .button {
 	align-items: center;
@@ -30,7 +30,7 @@
 
 	&:hover,
 	&:active {
-		background-color: scale-color($color: $color-primary, $lightness: -20%);
+		background-color: scale-color($color: dv.$color-primary, $lightness: -20%);
 	}
 }
 
@@ -40,7 +40,7 @@
 
 	&:hover,
 	&:active {
-		background-color: scale-color($color: $color-secondary, $lightness: -20%);
+		background-color: scale-color($color: dv.$color-secondary, $lightness: -20%);
 	}
 }
 
@@ -50,7 +50,7 @@
 
 	&:hover,
 	&:active {
-		background-color: scale-color($color: $color-tertiary, $lightness: -20%);
+		background-color: scale-color($color: dv.$color-tertiary, $lightness: -20%);
 	}
 }
 
@@ -60,6 +60,6 @@
 
 	&:hover,
 	&:active {
-		background-color: scale-color($color: $color-error, $lightness: -20%);
+		background-color: scale-color($color: dv.$color-error, $lightness: -20%);
 	}
 }

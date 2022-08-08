@@ -1,0 +1,37 @@
+@use 'sass:color';
+
+$color-background: #fffbff;
+$color-on-background: #1c1b1e;
+
+$color-surface: #fffbff;
+$color-on-surface: #1c1b1e;
+$color-surface-variant: #e7e0eb;
+$color-on-surface-variant: #49454e;
+
+$color-outline: #7a757f;
+
+$color-primary: #6750a4;
+$color-on-primary: #ffdad6;
+$color-primary-container: #e9ddff;
+$color-on-primary-container: #22005d;
+
+$color-secondary: #625b71;
+$color-on-secondary: #ffffff;
+$color-secondary-container: #e8def8;
+$color-on-secondary-container: #1e192b;
+
+$color-tertiary: #7e5260;
+$color-on-tertiary: #ffffff;
+$color-tertiary-container: #ffd9e3;
+$color-on-tertiary-container:#31101d;
+
+$color-error: #ba1a1a;
+$color-on-error: #ffffff;
+$color-error-container: #ffdad6;
+$color-on-error-container: #410002;
+
+$surface-1: color.change($color-primary, $alpha: 0.05);
+$surface-2: color.change($color-primary, $alpha: 0.08);
+$surface-3: color.change($color-primary, $alpha: 0.11);
+$surface-4: color.change($color-primary, $alpha: 0.12);
+$surface-5: color.change($color-primary, $alpha: 0.14);

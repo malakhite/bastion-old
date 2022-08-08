@@ -6,7 +6,7 @@ interface HamburgerMenuProps {
 	onClick: ReactEventHandler<HTMLButtonElement>;
 }
 
-export default function HamburgerMenu({ active, onClick }: HamburgerMenuProps) {
+export function HamburgerMenu({ active, onClick }: HamburgerMenuProps) {
 	return (
 		<button
 			className={styles.container}

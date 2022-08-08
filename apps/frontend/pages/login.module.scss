@@ -1,0 +1,18 @@
+.formContainer {
+	max-width: 20rem;
+}
+
+.loginForm {
+	align-items: center;
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
+
+	label {
+		font-family: var(--font-display);
+	}
+
+	input {
+		border: 1px solid var(--color-outline);
+	}
+}

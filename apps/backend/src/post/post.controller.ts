@@ -20,7 +20,7 @@ import { Roles } from '../auth/decorators/roles.decorator';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
 @UseInterceptors(ClassSerializerInterceptor)
-@Controller({ path: 'api/post', version: '1' })
+@Controller({ path: 'posts', version: '1' })
 export class PostController {
 	constructor(private readonly postService: PostService) {}
 

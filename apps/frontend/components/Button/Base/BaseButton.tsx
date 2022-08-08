@@ -5,15 +5,15 @@ import styles from './BaseButton.module.scss';
 interface BaseButtonProps {
 	children: ReactNode;
 	onClick?: ReactEventHandler<HTMLButtonElement>;
-	component: 'a' | 'button';
-	type: 'button' | 'submit' | 'reset';
-	variant: 'primary' | 'secondary' | 'tertiary' | 'danger';
+	component?: 'a' | 'button';
+	type?: 'button' | 'submit' | 'reset';
+	variant?: 'primary' | 'secondary' | 'tertiary' | 'danger';
 }
 
 /**
  * A BaseButton that can be used to create more complicated Buttons
  */
-export default function BaseButton({
+export function BaseButton({
 	children,
 	onClick,
 	component = 'button',
@@ -24,7 +24,7 @@ export default function BaseButton({
 
 	if (component === 'a') {
 		return (
-			<a className={style} aria-role="button">
+			<a className={style} role="button">
 				{children}
 			</a>
 		);

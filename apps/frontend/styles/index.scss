@@ -1,5 +1,5 @@
-@use 'prelude';
 @use 'base/reset';
-@use 'abstracts/vars';
-@use 'abstracts/custom-props';
-@use 'themes/default';
+@use 'abstracts/vars' as v;
+@use 'abstracts/custom-props' as cp;
+@use 'themes/default/custom-props' as dcp;
+@use 'themes/default/vars' as dv;

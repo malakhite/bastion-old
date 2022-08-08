@@ -1,0 +1,54 @@
+@use '../../styles/abstracts/vars' as v;
+
+.card {
+	background-color: var(--surface-1);
+	border-radius: 10px;
+	color: var(--color-on-surface);
+	display: block;
+	height: 50rem;
+	max-width: 100%;
+	overflow: hidden;
+}
+
+.imgContainer {
+	height: 50%;
+	position: relative;
+}
+
+.content {
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	padding: 1rem;
+	height: 50%;
+	max-height: 50%;
+}
+
+.textContainer {
+	font-size: 1.4rem;
+	height: 100%;
+	overflow: hidden;
+	padding: 0.5rem 0;
+}
+
+.author {
+	font-size: 1.4rem;
+	font-weight: 700;
+	padding-top: 0.5rem;
+}
+
+@media only screen and (min-width: v.$screen-sm) {
+	.card {
+		min-width: 25rem;
+		grid-column-end: span 4;
+	}
+
+	.card:only-child {
+		grid-column-end: span 12;
+	}
+
+	.card:first-child:nth-last-child(2),
+	.card:first-child:nth-last-child(2) ~ .card {
+		grid-column-end: span 6;
+	}
+}

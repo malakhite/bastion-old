@@ -1,20 +1,27 @@
+import { useState } from 'react';
 import { AppProps } from 'next/app';
 import Head from 'next/head';
-import Layout from '../components/Layout/Layout';
+import {
+	Hydrate,
+	QueryClient,
+	QueryClientProvider,
+} from '@tanstack/react-query';
+import { Layout } from '../components/Layout';
 
 import '../styles/index.scss';
 
 export default function CustomApp({ Component, pageProps }: AppProps) {
+	const [queryClient] = useState(() => new QueryClient());
 	return (
-		<>
-			<Head>
-				<title>scottabbey.com</title>
-			</Head>
-			<Layout>
-				<main className="app">
+		<QueryClientProvider client={queryClient}>
+			<Hydrate state={pageProps.dehydratedState}>
+				<Head>
+					<title>scottabbey.com</title>
+				</Head>
+				<Layout>
 					<Component {...pageProps} />
-				</main>
-			</Layout>
-		</>
+				</Layout>
+			</Hydrate>
+		</QueryClientProvider>
 	);
 }

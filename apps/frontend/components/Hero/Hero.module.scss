@@ -1,5 +1,45 @@
+@use 'sass:color';
+@use '../../styles/abstracts/vars' as v;
+@use '../../styles/themes/default/vars' as t;
+
+.container {
+	font-family: var(--font-display);
+	bottom: 0;
+	height: calc(100vh - 6.7rem);
+	top: 6.5rem;
+	width: 100%;
+}
+
 .hero {
-	object-fit: cover;
 	height: 100%;
+	position: relative;
 	width: 100vw;
+}
+
+.heroImage {
+	filter: brightness(0.5);
+	object-position: 85% 0;
+}
+
+.heroText {
+	background-color: color.change(t.$color-primary, $alpha: 0.1);
+	border-radius: 0.5rem;
+	color: var(--color-on-primary);
+	padding: 1rem;
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	transform: translate(-50%, -50%);
+	width: 80vw;
+
+	h2 {
+		font-size: 3rem;
+	}
+
+	@media only screen and (min-width: v.$screen-sm) {
+		& {
+			padding: 3rem;
+			width: unset;
+		}
+	}
 }

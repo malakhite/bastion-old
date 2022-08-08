@@ -1,4 +1,3 @@
-import * as argon2 from 'argon2';
 import { Exclude } from 'class-transformer';
 import { IsBoolean, IsDate, IsEmail, IsEnum } from 'class-validator';
 import {

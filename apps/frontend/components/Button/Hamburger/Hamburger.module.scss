@@ -2,7 +2,7 @@
 
 .container {
 	align-items: center;
-	background-color: var(--color-background);
+	background-color: transparent;
 	display: flex;
 	flex-direction: column;
 	gap: 5px;
@@ -18,7 +18,7 @@
 		width: 33px;
 		height: 4px;
 		position: relative;
-		background: var(--color-primary);
+		background: var(--color-on-primary);
 		border-radius: 3px;
 	
 		transition: transform 0.5s cubic-bezier(0.77,0.2,0.05,1.0),

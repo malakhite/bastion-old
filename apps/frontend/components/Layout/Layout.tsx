@@ -1,15 +1,30 @@
+import { useRouter } from 'next/router';
+
+import { Header } from '../Header';
+
 import type { ReactNode } from 'react';
-import Header from '../Header/Header';
+
+import styles from './Layout.module.scss';
 
 interface LayoutProps {
 	children: ReactNode;
 }
 
-export default function Layout({ children }: LayoutProps) {
+export function Layout({ children }: LayoutProps) {
+	const router = useRouter();
+	if (router.pathname === '/') {
+		return (
+			<>
+				<Header />
+				{children}
+			</>
+		);
+	}
+
 	return (
 		<>
 			<Header />
-			{children}
+			<main className={styles.app}>{children}</main>
 		</>
 	);
 }

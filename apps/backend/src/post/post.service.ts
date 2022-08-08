@@ -20,23 +20,23 @@ export class PostService {
 	) {}
 
 	async create(createPostDto: CreatePostDto): Promise<Post> {
+		const author = await this.userService.findOneById(
+			createPostDto.author_id,
+		);
+
+		if (!author) {
+			throw new BadRequestException(
+				`Author is required. Unable to find author with id ${createPostDto.author_id}`,
+			);
+		}
+
 		const post = await this.postRepository.create(createPostDto);
 		const postRevision = await this.postRevisionRepository.create(
 			createPostDto,
 		);
 
-		const author = await this.userService.findOneById(
-			createPostDto.author_id,
-		);
-
-		if (author) {
-			postRevision.author = author;
-			post.author = author;
-		} else {
-			throw new BadRequestException(
-				`Author is required. Unable to find author with id ${createPostDto.author_id}`,
-			);
-		}
+		postRevision.author = author;
+		post.author = author;
 
 		if (createPostDto.hero_id) {
 			const hero = await this.imageService.findOne(createPostDto.hero_id);

@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
-import HamburgerMenu from '../Button/Hamburger/Hamburger';
+import { HamburgerMenu } from '../Button/Hamburger';
 
 import type { ReactEventHandler } from 'react';
 
@@ -22,11 +22,7 @@ const menuLinks = [
 	},
 ];
 
-interface HeaderProps {
-	active: boolean;
-}
-
-export default function Header({ active }: HeaderProps) {
+export function Header() {
 	const router = useRouter();
 	const [activeLink, setActiveLink] = useState(router.pathname);
 	const [menuOpen, setMenuOpen] = useState(false);
