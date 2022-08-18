@@ -40,7 +40,15 @@ export function Header() {
 	return (
 		<header className={styles.header}>
 			<div>
-				<h1 className={styles.logo}>Scott Abbey</h1>
+				{router.pathname === '/' ? (
+					<h2 className={styles.logo}>Scott Abbey</h2>
+				) : (
+					<Link href="/">
+						<a>
+							<h2 className={styles.logo}>Scott Abbey</h2>
+						</a>
+					</Link>
+				)}
 			</div>
 			<HamburgerMenu active={menuOpen} onClick={handleHamburgerClick} />
 			<div className={styles.linkContainer} data-active={menuOpen}>

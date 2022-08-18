@@ -12,6 +12,24 @@
 	}
 
 	textarea {
+		font-family: var(--font-mono);
+		width: 100%;
+	}
+}
+
+.metaContainer {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 2rem;
+
+	div {
+		display: grid;
+		grid-template-columns: auto 75%;
+		gap: 1rem;
+	}
+
+	input {
+		padding: 0.5rem;
 		width: 100%;
 	}
 }

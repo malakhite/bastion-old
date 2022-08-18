@@ -1,6 +1,9 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import LinesEllipsis from 'react-lines-ellipsis';
+import type { PostResponse } from '../../lib/api/posts';
+
+import heroImage from '../../public/mcafee_knob.jpg';
 
 import styles from './Card.module.scss';
 
@@ -23,19 +26,23 @@ export interface Post {
 }
 
 export interface CardProps {
-	post: Post;
+	post: PostResponse;
 }
 
 export function Card({ post }: CardProps) {
+	const image = post.hero ?? {
+		file_name: heroImage,
+		alt_text: "McAfee's Knob",
+	};
 	return (
 		<Link href={`/posts/${post.slug}`}>
 			<a className={styles.card}>
 				<div className={styles.imgContainer}>
 					<Image
-						src={post.hero.src}
+						src={image.file_name}
 						layout="fill"
 						objectFit="cover"
-						alt={post.hero.alt}
+						alt={image.alt_text}
 					/>
 				</div>
 				<div className={styles.content}>

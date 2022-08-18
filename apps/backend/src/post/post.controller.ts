@@ -17,21 +17,21 @@ import { UpdatePostDto } from './dto/update-post.dto';
 import { Post as PostEntity } from './entities/post.entity';
 import { Role } from '../user/entities/user.entity';
 import { Roles } from '../auth/decorators/roles.decorator';
-import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { SessionGuard } from '../auth/guards/session.guard';
 
 @UseInterceptors(ClassSerializerInterceptor)
 @Controller({ path: 'posts', version: '1' })
 export class PostController {
 	constructor(private readonly postService: PostService) {}
 
-	@UseGuards(JwtAuthGuard)
+	@UseGuards(SessionGuard)
 	@Roles(Role.ADMIN)
 	@Post()
 	async create(@Body() createPostDto: CreatePostDto): Promise<PostEntity> {
 		return await this.postService.create(createPostDto);
 	}
 
-	@UseGuards(JwtAuthGuard)
+	@UseGuards(SessionGuard)
 	@Roles(Role.ADMIN)
 	@Get('all')
 	async findAll(@Query('skip') skip?: string, @Query('take') take?: string) {
@@ -57,14 +57,14 @@ export class PostController {
 		return this.postService.findOne(id);
 	}
 
-	@UseGuards(JwtAuthGuard)
+	@UseGuards(SessionGuard)
 	@Roles(Role.ADMIN)
 	@Patch(':id')
 	update(@Param('id') id: string, @Body() updatePostDto: UpdatePostDto) {
 		return this.postService.update(id, updatePostDto);
 	}
 
-	@UseGuards(JwtAuthGuard)
+	@UseGuards(SessionGuard)
 	@Roles(Role.ADMIN)
 	@Delete(':id')
 	remove(@Param('id') id: string) {

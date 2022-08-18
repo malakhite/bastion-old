@@ -3,6 +3,7 @@ import { ImageResponse } from './images';
 import { UserResponse } from './users';
 
 export interface PostResponse {
+	id: number;
 	slug: string;
 	title: string;
 	author: UserResponse;

@@ -8,13 +8,11 @@ import {
 	Request,
 	UseGuards,
 	UseInterceptors,
-	Res,
 } from '@nestjs/common';
 import { LocalAuthGuard } from './guards/local-auth.guard';
 
 import type { IRequestWithUser } from './interfaces';
 import type LoginDto from './dto/login.dto';
-import { Response } from 'express';
 
 type RequestWithSession = IRequestWithUser & {
 	session: {
@@ -33,14 +31,11 @@ export class AuthController {
 	async login(
 		@Request() request: RequestWithSession,
 		@Body() loginDto: LoginDto,
-		@Res({ passthrough: true }) response: Response,
 	) {
 		request.session.user = loginDto.email;
 		request.session.authProvider = 'local';
 
 		this.logger.debug(request.session);
-
-		response.redirect('back');
 
 		return request.user;
 	}

@@ -1,5 +1,3 @@
-const host = process.env.HOST;
-const port = process.env.PORT;
-const isDevelopment = process.env.NODE_ENV !== 'production';
+import { API_HOST } from '../env';
 
-export const baseUrl = `${isDevelopment ? 'http' : 'https'}://${host}:${port}`;
+export const baseUrl = API_HOST;

@@ -4,6 +4,7 @@ import { LessThanOrEqual, Repository } from 'typeorm';
 import { ImageService } from '../images/images.service';
 import { UserService } from '../user/user.service';
 import { CreatePostDto } from './dto/create-post.dto';
+import { PostResponseDto } from './dto/post-response.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { PostRevision } from './entities/post-revision.entity';
 import { Post } from './entities/post.entity';
@@ -49,36 +50,49 @@ export class PostService {
 			}
 		}
 
-		post.revisions.push(postRevision);
+		post.revisions = [postRevision];
 
 		return await this.postRepository.save(post);
 	}
 
-	async findAll(take?: number, skip?: number): Promise<Post[]> {
-		if (skip && take) {
-			return await this.postRepository.find({ skip, take });
-		}
-		return await this.postRepository.find();
+	async findAll(take?: number, skip?: number): Promise<PostResponseDto[]> {
+		const posts =
+			take && skip
+				? await this.postRepository.find({
+						skip,
+						take,
+				  })
+				: await this.postRepository.find();
+
+		return posts.map((post) => this.createPostResponse(post));
 	}
 
-	async findAllPublishedPosts(take?: number, skip?: number): Promise<Post[]> {
-		if (skip && take) {
-			return await this.postRepository.find({
-				skip,
-				take,
-				where: { published_at: LessThanOrEqual(new Date()) },
-			});
-		}
-		return await this.postRepository.find({
-			where: { published_at: LessThanOrEqual(new Date()) },
-		});
+	async findAllPublishedPosts(
+		take?: number,
+		skip?: number,
+	): Promise<PostResponseDto[]> {
+		const posts =
+			take && skip
+				? await this.postRepository.find({
+						skip,
+						take,
+						where: { published_at: LessThanOrEqual(new Date()) },
+				  })
+				: await this.postRepository.find({
+						where: { published_at: LessThanOrEqual(new Date()) },
+				  });
+
+		return posts.map((post) => this.createPostResponse(post));
 	}
 
 	async findOne(slug: string): Promise<Post | null> {
 		return await this.postRepository.findOne({ where: { slug } });
 	}
 
-	async update(slug: string, updatePostDto: UpdatePostDto): Promise<Post> {
+	async update(
+		slug: string,
+		updatePostDto: UpdatePostDto,
+	): Promise<PostResponseDto> {
 		const post = await this.postRepository.findOne({ where: { slug } });
 		if (post && post.revisions.length > 0) {
 			const { id: revisionId, ...latestRevision } =
@@ -90,7 +104,8 @@ export class PostService {
 			newRevision = await this.postRevisionRepository.save(newRevision);
 
 			post.revisions.push(newRevision);
-			return this.postRepository.save(post);
+			const savedPost = await this.postRepository.save(post);
+			return this.createPostResponse(savedPost);
 		} else {
 			throw new BadRequestException(`Post with slug '${slug}' not found`);
 		}
@@ -101,5 +116,24 @@ export class PostService {
 		if (result.affected === 0) {
 			throw new BadRequestException(`Post with slug '${slug}' not found`);
 		}
+	}
+
+	private createPostResponse(post: Post): PostResponseDto {
+		const { password, ...postAuthor } = post.author;
+		const [latestRevision] = post.revisions;
+		const postResponse: PostResponseDto = {
+			id: post.id,
+			slug: post.slug,
+			title: latestRevision.title,
+			author: postAuthor,
+			hero: latestRevision.hero,
+			text_json: latestRevision.text_json,
+			text: latestRevision.text,
+			created_at: post.created_at,
+			published_at: post.published_at,
+			updated_at: post.updated_at,
+		};
+
+		return postResponse;
 	}
 }

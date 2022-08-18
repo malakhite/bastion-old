@@ -1,34 +1,46 @@
-import { useEffect } from 'react';
-import { useLocalStorage } from '@mantine/hooks';
+import { useEffect, useRef } from 'react';
 import { useRouter } from 'next/router';
-import useSWR from 'swr';
+import { useQuery } from '@tanstack/react-query';
+import { UserResponse } from './api/users';
 import { API_HOST } from './env';
-
-import type { User } from '../pages/login';
-
-const fetcher = (id: string) =>
-	fetch(`${API_HOST}/v1/users/${id}`, { credentials: 'include' }).then((r) =>
-		r.json(),
-	);
 
 interface UseUserParams {
 	redirectTo?: string;
 	redirectIfFound?: boolean;
 }
 
-export function useUser({ redirectTo, redirectIfFound }: UseUserParams = {}) {
-	const [userId] = useLocalStorage({ key: 'userId', defaultValue: '' });
+async function getUser(userId: string): Promise<UserResponse> {
+	const url = new URL(`/v1/auth/${userId}`, API_HOST);
+	const response = await fetch(url);
+
+	if (response.ok) {
+		return (await response.json()) as UserResponse;
+	}
+
+	return null;
+}
+
+export async function useUser({
+	redirectTo,
+	redirectIfFound,
+}: UseUserParams = {}) {
+	const router = useRouter();
+	const userId = useRef('');
+
+	useEffect(() => {
+		userId.current = window.localStorage.getItem('userId');
+	}, []);
+
 	const {
 		data: user,
-		error,
-		mutate: mutateUser,
-	} = useSWR<User>(userId, fetcher);
-	const router = useRouter();
-	const finished = Boolean(user);
+		isLoading,
+		isError,
+	} = useQuery(['me', userId.current], () => getUser(userId.current));
+
 	const hasUser = Boolean(user?.id);
 
 	useEffect(() => {
-		if (!redirectTo || !finished) return;
+		if (!redirectTo || isLoading) return;
 
 		if (
 			(redirectTo && !redirectIfFound && !hasUser) ||
@@ -36,7 +48,7 @@ export function useUser({ redirectTo, redirectIfFound }: UseUserParams = {}) {
 		) {
 			router.push(redirectTo);
 		}
-	}, [redirectTo, redirectIfFound, finished, hasUser, router]);
+	}, [redirectTo, redirectIfFound, isLoading, hasUser, router]);
 
-	return error ? null : { user, mutateUser };
+	return isError ? null : user;
 }

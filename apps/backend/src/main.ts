@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 // eslint-disable @typescript-eslint/no-non-null-assertion
 import { ValidationPipe, VersioningType } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
@@ -47,6 +48,7 @@ async function bootstrap() {
 	});
 	app.useGlobalInterceptors(new LoggerErrorInterceptor());
 	app.useLogger(app.get(Logger));
+	app.enableShutdownHooks();
 
 	const host = configService.get<string>('HOST')!;
 	const port = configService.get<number>('PORT')!;

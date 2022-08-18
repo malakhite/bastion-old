@@ -15,7 +15,7 @@ export function Hero() {
 				/>
 			</div>
 			<div className={styles.heroText}>
-				<h2>Hi! I&apos;m Scott.</h2>
+				<h1>Hi! I&apos;m Scott.</h1>
 				<p>
 					I&apos;m a software engineer from Virginia Beach, VA with a
 					passion for automation, tooling, and managing complexity.
