@@ -1,3 +1,1 @@
-import { API_HOST } from '../env';
-
-export const baseUrl = API_HOST;
+export const baseUrl = process.env.NEXT_PUBLIC_API_HOST;

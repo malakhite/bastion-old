@@ -6,6 +6,7 @@ import { HamburgerMenu } from '../Button/Hamburger';
 import type { ReactEventHandler } from 'react';
 
 import styles from './Header.module.scss';
+import { Profile } from './Profile';
 
 const menuLinks = [
 	{
@@ -64,6 +65,7 @@ export function Header() {
 						</a>
 					</Link>
 				))}
+				<Profile />
 			</div>
 		</header>
 	);

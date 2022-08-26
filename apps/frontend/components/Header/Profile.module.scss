@@ -1,0 +1,35 @@
+.profileContainer {
+	align-items: center;
+	border: 1px solid var(--color-on-primary);
+	border-radius: 0.5rem;
+	display: flex;
+	font-size: 1.5rem;
+	font-weight: 700;
+	gap: 1rem;
+	padding: 1rem;
+}
+
+.profileContainer:hover {
+	background-color: var(--color-primary-container);
+	color: var(--color-on-primary-container);
+}
+
+.profilePicture {
+	align-items: center;
+	background-color: var(--color-on-primary);
+	border-radius: 50%;
+	color: var(--color-primary);
+	display: flex;
+	height: 3rem;
+	justify-content: center;
+	overflow: hidden;
+	width: 3rem;
+}
+
+.name {
+	font-family: var(--font-display);
+}
+
+.login {
+	font-family: var(--font-display);
+}

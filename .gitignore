@@ -44,3 +44,6 @@ ormconfig.ts
 
 # DB files
 /data
+
+# Next.js
+.next

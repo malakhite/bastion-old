@@ -1,3 +1,5 @@
+@use '../../../styles/abstracts/vars' as v;
+
 .formContainer {
 	display: flex;
 	flex-direction: column;
@@ -22,14 +24,18 @@
 	grid-template-columns: 1fr 1fr;
 	gap: 2rem;
 
-	div {
-		display: grid;
-		grid-template-columns: auto 75%;
-		gap: 1rem;
-	}
-
 	input {
 		padding: 0.5rem;
 		width: 100%;
+	}
+
+	input[type='checkbox'] {
+		align-self: center;
+		justify-self: start;
+		width: unset;
+	}
+
+	@media only screen and (min-width: v.$screen-sm) {
+		grid-template-columns: 1fr 1fr 1fr 1fr;
 	}
 }

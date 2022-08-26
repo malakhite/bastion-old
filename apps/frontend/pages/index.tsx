@@ -14,13 +14,15 @@ export function Index() {
 		<div>
 			<Hero />
 			<div className={styles.body}>
-				<section className={styles.postsSection}>
-					<CardContainer>
-						{blogEntries.slice(0, 4).map((entry) => (
-							<Card post={entry} key={entry.id} />
-						))}
-					</CardContainer>
-				</section>
+				{blogEntries && (
+					<section className={styles.postsSection}>
+						<CardContainer>
+							{blogEntries.slice(0, 4).map((entry) => (
+								<Card post={entry} key={entry.id} />
+							))}
+						</CardContainer>
+					</section>
+				)}
 			</div>
 		</div>
 	);

@@ -6,6 +6,7 @@ import {
 	QueryClient,
 	QueryClientProvider,
 } from '@tanstack/react-query';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { Layout } from '../components/Layout';
 
 import '../styles/index.scss';
@@ -22,6 +23,7 @@ export default function CustomApp({ Component, pageProps }: AppProps) {
 					<Component {...pageProps} />
 				</Layout>
 			</Hydrate>
+			<ReactQueryDevtools initialIsOpen={false} />
 		</QueryClientProvider>
 	);
 }
