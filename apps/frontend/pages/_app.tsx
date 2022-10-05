@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { AppProps } from 'next/app';
 import { MantineProvider } from '@mantine/core';
+import { ModalsProvider } from '@mantine/modals';
 import { NotificationsProvider } from '@mantine/notifications';
 import Head from 'next/head';
 import {
@@ -10,6 +11,8 @@ import {
 } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import Layout from '../components/Layout';
+import { ModalName } from '../lib/constants';
+import { LoginModal } from '../components/Modals/Login';
 
 export default function CustomApp({ Component, pageProps }: AppProps) {
 	const [queryClient] = useState(
@@ -42,11 +45,13 @@ export default function CustomApp({ Component, pageProps }: AppProps) {
 						primaryColor: 'violet',
 					}}
 				>
-					<NotificationsProvider>
-						<Layout>
-							<Component {...pageProps} />
-						</Layout>
-					</NotificationsProvider>
+					<ModalsProvider modals={{ [ModalName.Login]: LoginModal }}>
+						<NotificationsProvider>
+							<Layout>
+								<Component {...pageProps} />
+							</Layout>
+						</NotificationsProvider>
+					</ModalsProvider>
 				</MantineProvider>
 			</Hydrate>
 			<ReactQueryDevtools initialIsOpen={false} />

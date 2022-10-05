@@ -1,79 +1,88 @@
-import axios from 'axios';
+import { useLocalStorage } from '@mantine/hooks';
+import { closeModal } from '@mantine/modals';
 import { showNotification } from '@mantine/notifications';
-import { useUser } from './useUser';
+import { useQueryClient, useQuery, useMutation } from '@tanstack/react-query';
 import { axiosInstance } from '../api/axios';
+import { UserResponse } from '../api/users';
+import { ModalName } from '../constants';
+import { QueryKeys } from '../react-query/constants';
 
-import type { AxiosResponse } from 'axios';
-import type { UserResponse } from '../api/users';
-
-interface IUseAuth {
-	signin: (values: { email: string; password: string }) => Promise<void>;
-	// signup: (email: string, password: string) => Promise<void>;
-	signout: () => void;
+interface ILogin {
+	email: string;
+	password: string;
 }
 
-type ErrorResponse = { message: string };
-type AuthResponse = UserResponse | ErrorResponse;
+async function loginRequest(login: ILogin) {
+	const { data } = await axiosInstance.post<UserResponse>(
+		'/v1/auth/login',
+		login,
+		{ headers: { 'Content-Type': 'application/json' } },
+	);
 
-export function useAuth(): IUseAuth {
-	const SERVER_ERROR = 'There was an error contacting the server';
-	const { clearUser, updateUser } = useUser();
+	return data;
+}
 
-	async function authServerCall(
-		urlEndpoint: string,
-		email: string,
-		password: string,
-	): Promise<void> {
-		try {
-			const { data, status }: AxiosResponse<AuthResponse> =
-				await axiosInstance({
-					url: urlEndpoint,
-					method: 'POST',
-					data: { email, password },
-					headers: { 'Content-Type': 'application/json' },
-				});
+async function logoutRequest() {
+	const { data, status } = await axiosInstance({ url: '/v1/auth/logout' });
 
-			if (status === 401) {
-				const title = 'Unable to login';
-				const message =
-					'message' in data ? data.message : 'Unauthorized';
-				showNotification({ title, message, color: 'red' });
-				return;
-			}
-
-			if ('id' in data) {
-				showNotification({
-					title: 'Logged In',
-					message: `Logged in as ${data.email}`,
-				});
-				updateUser(data);
-			}
-		} catch (error) {
-			const title = 'Error';
-			const message =
-				axios.isAxiosError(error) &&
-				(error.response.data as ErrorResponse).message
-					? (error.response.data as ErrorResponse).message
-					: SERVER_ERROR;
-			showNotification({ title, message, color: 'red' });
-		}
+	if (status === 200) {
+		return null;
 	}
+	console.error(data);
+}
 
-	async function signin(values: {
-		email: string;
-		password: string;
-	}): Promise<void> {
-		authServerCall('/v1/auth/login', values.email, values.password);
-	}
+async function getUser(
+	email: string | null,
+	signal: AbortSignal,
+): Promise<UserResponse | null> {
+	if (!email) return null;
+	const { data } = await axiosInstance.get<UserResponse>(
+		`/v1/users/${email}`,
+		{ signal },
+	);
 
-	async function signout(): Promise<void> {
-		await axiosInstance({ url: '/v1/auth/logout' });
-		clearUser();
-		showNotification({
-			title: 'Signed out!',
-			message: 'You have successfully logged out.',
-		});
-	}
+	return data;
+}
 
-	return { signin, signout };
+export function useAuth() {
+	const [email, setEmail, removeEmail] = useLocalStorage<string>({
+		key: 'email',
+		defaultValue: '',
+	});
+
+	const queryClient = useQueryClient();
+
+	const { data: user } = useQuery<UserResponse>(
+		[QueryKeys.User, email],
+		({ signal }) => getUser(email, signal),
+	);
+
+	const loginMutation = useMutation(loginRequest, {
+		onSuccess: (data) => {
+			closeModal(ModalName.Login);
+			setEmail(data.email);
+			queryClient.invalidateQueries([QueryKeys.User]);
+			queryClient.setQueriesData([QueryKeys.User, data.email], data);
+			showNotification({
+				title: 'Logged In',
+				message: `Logged in as ${data.email}`,
+			});
+		},
+	});
+
+	const logoutMutation = useMutation(logoutRequest, {
+		onSuccess: () => {
+			queryClient.invalidateQueries([QueryKeys.User, email]);
+			removeEmail();
+			showNotification({
+				title: 'Signed out!',
+				message: 'You have successfully logged out.',
+			});
+		},
+	});
+
+	const doLogin = (login: ILogin) => loginMutation.mutate(login);
+	const doLogout = () => logoutMutation.mutate();
+
+	return { doLogin, doLogout, email, user };
 }

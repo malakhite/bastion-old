@@ -1,3 +1,3 @@
-export const queryKeys = {
-	user: 'user',
-};
+export enum QueryKeys {
+	User = 'user',
+}
