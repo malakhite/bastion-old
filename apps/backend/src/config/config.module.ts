@@ -16,7 +16,7 @@ const schema = z.object({
 		return parsed;
 	}),
 	DATABASE_URL: z.string().url(),
-	SYNCRHONIZE_DB: z.string().transform((val) => {
+	SYNCHRONIZE_DB: z.string().transform((val) => {
 		return val === 'true';
 	}),
 	SESSION_TTL: z.string().transform((val, ctx) => {

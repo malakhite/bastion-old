@@ -25,4 +25,9 @@ export class SessionService {
 	getTypeormStore(): TypeormStore {
 		return this.typeormStore;
 	}
+
+	async getSession(id: string): Promise<Session | null> {
+		const session = await this.sessionRepository.findOne({ where: { id } });
+		return session;
+	}
 }

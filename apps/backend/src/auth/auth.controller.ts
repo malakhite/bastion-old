@@ -35,8 +35,6 @@ export class AuthController {
 		request.session.user = loginDto.email;
 		request.session.authProvider = 'local';
 
-		this.logger.debug(request.session);
-
 		return request.user;
 	}
 

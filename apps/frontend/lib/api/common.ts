@@ -1,1 +1,1 @@
-export const baseUrl = process.env.NEXT_PUBLIC_API_HOST;
+export const baseURL = process.env.NEXT_PUBLIC_API_HOST;

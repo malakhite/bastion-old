@@ -1,7 +1,9 @@
 import { Head, Html, Main, NextScript } from 'next/document';
-import { getCssText } from '../stitches.config';
+import { createGetInitialProps } from '@mantine/next';
 
-export default function Document() {
+const getInitialProps = createGetInitialProps();
+
+function Document() {
 	return (
 		<Html lang="en">
 			<Head>
@@ -12,12 +14,8 @@ export default function Document() {
 					crossOrigin="true"
 				/>
 				<link
-					href="https://fonts.googleapis.com/css2?family=Noto+Sans+Display:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&family=Noto+Sans+Mono&family=Noto+Serif:ital,wght@0,400;0,700;1,400;1,700&display=swap"
+					href="https://fonts.googleapis.com/css2?family=Noto+Sans+Display:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&family=Noto+Sans+Mono&family=Noto+Sans:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap"
 					rel="stylesheet"
-				/>
-				<style
-					id="stitches"
-					dangerouslySetInnerHTML={{ __html: getCssText() }}
 				/>
 			</Head>
 			<body>
@@ -27,3 +25,7 @@ export default function Document() {
 		</Html>
 	);
 }
+
+Document.getInitialProps = getInitialProps;
+
+export default Document;

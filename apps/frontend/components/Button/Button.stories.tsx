@@ -4,6 +4,16 @@ import { Button } from './Button';
 export default {
 	title: 'Button',
 	component: Button,
+	argTypes: {
+		variant: {
+			options: ['gray', 'blue', 'green', 'red'],
+			control: { type: 'inline-radio' },
+		},
+		size: {
+			options: ['1', '2', '3'],
+			control: { type: 'inline-radio' },
+		},
+	},
 } as ComponentMeta<typeof Button>;
 
 const Template: ComponentStory<typeof Button> = (args) => (
@@ -11,12 +21,3 @@ const Template: ComponentStory<typeof Button> = (args) => (
 );
 
 export const Default = Template.bind({});
-
-export const Blue = Template.bind({});
-Blue.args = { ...Default.args, variant: 'blue' };
-
-export const Green = Template.bind({});
-Green.args = { ...Default.args, variant: 'green' };
-
-export const Red = Template.bind({});
-Red.args = { ...Default.args, variant: 'red' };

@@ -1,8 +1,7 @@
 /* eslint-disable no-fallthrough */
 import { ReactNode } from 'react';
-import { useRouter } from 'next/router';
 import { Role } from '../../lib/api/users';
-import useUser from '../../lib/hooks/useUser';
+import { useUser } from '../../lib/hooks/useUser';
 
 interface ProtectedWrapperProps {
 	minRole?: Role;
@@ -13,8 +12,7 @@ export default function ProtectedWrapper({
 	minRole = Role.OWNER,
 	children,
 }: ProtectedWrapperProps) {
-	const router = useRouter();
-	const { data: user, isLoading, isError } = useUser();
+	const { user } = useUser();
 
 	let rolePasses = false;
 
@@ -39,15 +37,6 @@ export default function ProtectedWrapper({
 				rolePasses = true;
 			}
 		}
-	}
-
-	if (isLoading) {
-		return <>Loading...</>;
-	}
-
-	if (isError) {
-		router.push('/login');
-		return <>Loading...</>;
 	}
 
 	if (user && rolePasses) {

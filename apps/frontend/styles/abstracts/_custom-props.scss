@@ -1,9 +1,0 @@
-@use 'vars' as *;
-
-:root {
-	--font-body: #{$font-body};
-	--font-display: #{$font-display};
-	--font-mono: #{$font-mono};
-
-	--min-target: #{$min-target};
-}

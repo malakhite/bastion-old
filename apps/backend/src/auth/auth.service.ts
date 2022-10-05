@@ -8,17 +8,26 @@ import type { User } from '../user/entities/user.entity';
 export class AuthService {
 	private readonly logger = new Logger(AuthService.name);
 
-	constructor(private userService: UserService) {}
+	constructor(private readonly userService: UserService) {}
 
-	public async validateUser(email: string, pass: string): Promise<User> {
-		const user = await this.userService.findOneByEmail(email);
-		if (user) {
-			const valid = await argon2.verify(user.password, pass);
-			this.logger.debug({ valid });
-			if (valid) {
-				return user;
+	public async getAuthenticatedUser(
+		email: string,
+		pass: string,
+	): Promise<User> {
+		try {
+			const user = await this.userService.findOneByEmail(email);
+			if (user) {
+				const isPasswordMatching = await argon2.verify(
+					user.password,
+					pass,
+				);
+				if (isPasswordMatching) {
+					return user;
+				}
 			}
+			throw new UnauthorizedException('Wrong credentials provided.');
+		} catch (e) {
+			throw new UnauthorizedException('Wrong credentials provided.');
 		}
-		throw new UnauthorizedException('Wrong credentials provided.');
 	}
 }

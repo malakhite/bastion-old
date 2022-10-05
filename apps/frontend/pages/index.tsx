@@ -1,30 +1,22 @@
+import { Container } from '@mantine/core';
 import { dehydrate, QueryClient, useQuery } from '@tanstack/react-query';
 import { GetServerSideProps } from 'next';
-import { Card } from '../components/Card';
-import { CardContainer } from '../components/CardContainer';
-import { Hero } from '../components/Hero';
+import BlogCardContainer from '../components/BlogCardContainer';
+import Hero from '../components/Hero';
 import { getPosts } from '../lib/api/posts';
-
-import styles from './index.module.scss';
 
 export function Index() {
 	const { data: blogEntries } = useQuery(['posts'], getPosts);
 
 	return (
-		<div>
+		<>
 			<Hero />
-			<div className={styles.body}>
+			<Container>
 				{blogEntries && (
-					<section className={styles.postsSection}>
-						<CardContainer>
-							{blogEntries.slice(0, 4).map((entry) => (
-								<Card post={entry} key={entry.id} />
-							))}
-						</CardContainer>
-					</section>
+					<BlogCardContainer posts={blogEntries.slice(0, 4)} />
 				)}
-			</div>
-		</div>
+			</Container>
+		</>
 	);
 }
 

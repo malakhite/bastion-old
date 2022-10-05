@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { darkTheme } from '../stitches.config';
+import { darkTheme } from '../../stitches.config';
 import { Button } from './Button';
 
 export function DarkThemeButton() {

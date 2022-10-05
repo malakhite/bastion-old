@@ -8,6 +8,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 			imports: [ConfigModule],
 			inject: [ConfigService],
 			useFactory: function dbFactory(configService: ConfigService) {
+				console.log(configService.get('SYNCHRONIZE_DB'));
 				return {
 					type: 'postgres',
 					url: configService.get('DATABASE_URL'),

@@ -1,27 +1,45 @@
-import { useQuery } from '@tanstack/react-query';
-import { useEffect, useRef } from 'react';
-import { baseUrl } from '../api/common';
-import { UserResponse } from '../api/users';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { queryKeys } from '../react-query/constants';
+import { axiosInstance } from '../api/axios';
 
-const getUser = async function getUser(userEmail: string | null) {
-	if (userEmail === null) return;
-	const url = new URL(`/v1/users/${userEmail}`, baseUrl);
-	const res = await fetch(url);
+import type { AxiosResponse } from 'axios';
+import type { UserResponse } from '../api/users';
 
-	if (res.ok) {
-		const user = (await res.json()) as UserResponse;
-		return user;
-	} else {
-		throw new Error(await res.text());
+async function getUser(
+	user: UserResponse | null,
+	signal: AbortSignal,
+): Promise<UserResponse | null> {
+	if (!user) return null;
+	const { data }: AxiosResponse<UserResponse> = await axiosInstance.get(
+		`/v1/users/${user.email}`,
+		{ signal },
+	);
+
+	return data;
+}
+
+interface IUseUser {
+	user: UserResponse | null;
+	updateUser: (user: UserResponse) => void;
+	clearUser: () => void;
+}
+
+export function useUser(): IUseUser {
+	const queryClient = useQueryClient();
+
+	const { data: user } = useQuery<UserResponse>(
+		[queryKeys.user],
+		({ signal }) => getUser(user, signal),
+		{},
+	);
+
+	function updateUser(newUser: UserResponse): void {
+		queryClient.setQueryData([queryKeys.user], newUser);
 	}
-};
 
-export default function useUser() {
-	const userEmail = useRef('');
+	function clearUser() {
+		queryClient.setQueryData([queryKeys.user], null);
+	}
 
-	useEffect(() => {
-		userEmail.current = window.localStorage.getItem('userEmail');
-	}, []);
-
-	return useQuery(['user'], () => getUser(userEmail.current));
+	return { user, updateUser, clearUser };
 }

@@ -22,7 +22,6 @@ export class SessionGuard implements CanActivate {
 		const request = context.switchToHttp().getRequest<SessionRequest>();
 
 		if (!request.session.user) {
-			this.logger.debug('The user has no session.');
 			throw new UnauthorizedException("You're not logged in");
 		}
 
@@ -34,9 +33,6 @@ export class SessionGuard implements CanActivate {
 			return true;
 		} catch (e) {
 			if (e instanceof NotFoundException) {
-				this.logger.debug(
-					`The user '${request.session.user}' does not exist, but has a session.`,
-				);
 				throw new UnauthorizedException("You're not logged in");
 			}
 

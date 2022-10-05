@@ -1,3 +1,5 @@
+import { ImageResponse } from './images';
+
 export enum Role {
 	OWNER = 'owner',
 	ADMIN = 'admin',
@@ -10,6 +12,7 @@ export interface UserResponse {
 	email: string;
 	name: string;
 	is_active: boolean;
+	image?: ImageResponse;
 	role: Role;
 	created_at: string;
 	updated_at: string;

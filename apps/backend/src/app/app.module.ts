@@ -5,6 +5,7 @@ import { APP_FILTER } from '@nestjs/core';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from '../auth/auth.module';
+import { CacheModule } from '../cache/cache.module';
 import { DatabaseModule } from '../db/database.module';
 import { BastionConfigModule } from '../config/config.module';
 import { BastionLoggerModule } from '../logger/logger.module';
@@ -19,6 +20,7 @@ import { BastionExceptionFilter } from './exception.filter';
 		BastionConfigModule,
 		BastionLoggerModule,
 		AuthModule,
+		CacheModule,
 		DatabaseModule,
 		ImageModule,
 		PostModule,

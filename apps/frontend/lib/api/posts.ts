@@ -1,4 +1,4 @@
-import { baseUrl } from './common';
+import { baseURL } from './common';
 import { ImageResponse } from './images';
 import { UserResponse } from './users';
 
@@ -24,7 +24,7 @@ export interface CreatePostDto {
 }
 
 export async function getPosts(): Promise<PostResponse[]> {
-	const url = new URL('/v1/posts', baseUrl);
+	const url = new URL('/v1/posts', baseURL);
 	const response = await fetch(url, {
 		headers: {
 			Accept: 'application/json',
@@ -39,7 +39,7 @@ export async function getPosts(): Promise<PostResponse[]> {
 }
 
 export async function createPost(createPostDto: CreatePostDto) {
-	const url = new URL('/v1/posts', baseUrl);
+	const url = new URL('/v1/posts', baseURL);
 	const response = await fetch(url, {
 		method: 'post',
 		body: JSON.stringify(createPostDto),

@@ -1,7 +1,7 @@
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
-import { BaseButton } from '../components/Button/Base';
+import { Button } from '../components/Button/Button';
 import useLogin from '../lib/hooks/useLogin';
 import styles from './login.module.scss';
 
@@ -42,7 +42,7 @@ export default function Login() {
 							onChange={(e) => setPassword(e.target.value)}
 						/>
 					</div>
-					<BaseButton
+					<Button
 						type="submit"
 						onClick={(e) => {
 							e.preventDefault();
@@ -50,7 +50,7 @@ export default function Login() {
 						}}
 					>
 						{loginMutation.isLoading ? 'Loading' : 'Login'}
-					</BaseButton>
+					</Button>
 				</form>
 			</div>
 		</>

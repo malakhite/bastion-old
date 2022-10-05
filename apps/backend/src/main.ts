@@ -14,7 +14,7 @@ import { SessionService } from './auth/session.service';
 async function bootstrap() {
 	const app = await NestFactory.create(AppModule, {
 		bufferLogs: true,
-		cors: { origin: true },
+		cors: { origin: true, credentials: true },
 	});
 
 	const configService = app.get(ConfigService);
@@ -34,7 +34,7 @@ async function bootstrap() {
 				secure: configService.get<string>('NODE_ENV') === 'production',
 			},
 			resave: false,
-			saveUninitialized: true,
+			saveUninitialized: false,
 			store: typeormStore,
 		}),
 	);
