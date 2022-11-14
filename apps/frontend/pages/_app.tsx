@@ -43,6 +43,7 @@ export default function CustomApp({ Component, pageProps }: AppProps) {
 							fontFamily: '"Noto Sans Display", sans-serif',
 						},
 						primaryColor: 'violet',
+						globalStyles: (theme) => ({}),
 					}}
 				>
 					<ModalsProvider modals={{ [ModalName.Login]: LoginModal }}>

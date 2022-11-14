@@ -1,7 +1,11 @@
-import { Stack, TextInput, PasswordInput, Button } from '@mantine/core';
+import { useCallback } from 'react';
+import { Stack, TextInput, PasswordInput, Button, Text } from '@mantine/core';
 import { useForm, zodResolver } from '@mantine/form';
-import { ContextModalProps } from '@mantine/modals';
+import { closeModal, ContextModalProps } from '@mantine/modals';
+import { showNotification } from '@mantine/notifications';
 import { z } from 'zod';
+import { ModalName } from '../../lib/constants';
+import { isAxiosError } from '../../lib/api/axios';
 import { useAuth } from '../../lib/hooks/useAuth';
 
 const schema = z.object({
@@ -10,7 +14,8 @@ const schema = z.object({
 });
 
 export function LoginModal({ context, id, innerProps }: ContextModalProps) {
-	const { doLogin } = useAuth();
+	const { loginMutation } = useAuth();
+	const { error } = loginMutation;
 	const loginForm = useForm({
 		initialValues: {
 			email: '',
@@ -19,8 +24,30 @@ export function LoginModal({ context, id, innerProps }: ContextModalProps) {
 		validate: zodResolver(schema),
 	});
 
+	const handleLoginError = useCallback(() => {
+		if (isAxiosError(error)) {
+			if (error.response.status === 401) {
+				return <Text color="red">Incorrect email or password</Text>;
+			}
+		}
+
+		return '';
+	}, [error]);
+
 	return (
-		<form onSubmit={loginForm.onSubmit(doLogin)}>
+		<form
+			onSubmit={loginForm.onSubmit((login) =>
+				loginMutation.mutate(login, {
+					onSuccess: () => {
+						closeModal(ModalName.Login);
+						showNotification({
+							title: 'Login successful',
+							message: `Successfully logged in as ${login.email}`,
+						});
+					},
+				}),
+			)}
+		>
 			<Stack>
 				<TextInput
 					withAsterisk
@@ -32,6 +59,7 @@ export function LoginModal({ context, id, innerProps }: ContextModalProps) {
 					label="Password"
 					{...loginForm.getInputProps('password')}
 				/>
+				{handleLoginError()}
 				<Button type="submit">Login</Button>
 			</Stack>
 		</form>

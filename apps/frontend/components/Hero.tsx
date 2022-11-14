@@ -26,8 +26,8 @@ export default function Hero() {
 			<Paper p="md" radius="lg" shadow="md" className={classes.heroText}>
 				<Title order={1}>Hi! I&apos;m Scott.</Title>
 				<Text>
-					I&apos;m a software engineer from Virginia Beach, VA with a
-					passion for automation, tooling, and managing complexity.
+					I&apos;m a software engineer from Virginia with a passion
+					for automation, tooling, and managing complexity.
 				</Text>
 			</Paper>
 		</Container>

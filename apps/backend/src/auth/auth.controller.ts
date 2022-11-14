@@ -11,15 +11,8 @@ import {
 } from '@nestjs/common';
 import { LocalAuthGuard } from './guards/local-auth.guard';
 
-import type { IRequestWithUser } from './interfaces';
 import type LoginDto from './dto/login.dto';
-
-type RequestWithSession = IRequestWithUser & {
-	session: {
-		authProvider: string;
-		user: string;
-	};
-};
+import type { RequestWithSession } from './auth.types';
 
 @UseInterceptors(ClassSerializerInterceptor)
 @Controller({ path: 'auth', version: '1' })
@@ -40,6 +33,7 @@ export class AuthController {
 
 	@Get('logout')
 	async logout(@Request() request: RequestWithSession) {
+		this.logger.debug(request.session);
 		return await new Promise((resolve, reject) =>
 			request.session.destroy((err) => {
 				if (err) reject(err);

@@ -9,6 +9,8 @@ import {
 	UseInterceptors,
 	ClassSerializerInterceptor,
 	UseGuards,
+	Logger,
+	Session,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -20,6 +22,8 @@ import { Roles } from '../auth/decorators/roles.decorator';
 @UseInterceptors(ClassSerializerInterceptor)
 @Controller({ path: 'users', version: '1' })
 export class UserController {
+	private readonly logger = new Logger(UserController.name);
+
 	constructor(private readonly userService: UserService) {}
 
 	@UseGuards(SessionGuard)
@@ -35,7 +39,11 @@ export class UserController {
 	}
 
 	@Get(':email')
-	async findOne(@Param('email') email: string) {
+	async findOne(
+		@Param('email') email: string,
+		@Session() session: Record<string, unknown>,
+	) {
+		this.logger.debug(session);
 		return await this.userService.findOneByEmail(email);
 	}
 
@@ -46,6 +54,7 @@ export class UserController {
 		@Param('email') email: string,
 		@Body() updateUserDto: UpdateUserDto,
 	) {
+		this.logger.debug(updateUserDto);
 		return await this.userService.update(email, updateUserDto);
 	}
 

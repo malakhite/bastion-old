@@ -1,10 +1,7 @@
 import { useLocalStorage } from '@mantine/hooks';
-import { closeModal } from '@mantine/modals';
-import { showNotification } from '@mantine/notifications';
 import { useQueryClient, useQuery, useMutation } from '@tanstack/react-query';
-import { axiosInstance } from '../api/axios';
-import { UserResponse } from '../api/users';
-import { ModalName } from '../constants';
+import { axiosInstance, isAxiosError } from '../api/axios';
+import { UpdateUserDto, UserResponse } from '../api/users';
 import { QueryKeys } from '../react-query/constants';
 
 interface ILogin {
@@ -12,7 +9,7 @@ interface ILogin {
 	password: string;
 }
 
-async function loginRequest(login: ILogin) {
+async function loginRequest(login: ILogin): Promise<UserResponse> {
 	const { data } = await axiosInstance.post<UserResponse>(
 		'/v1/auth/login',
 		login,
@@ -23,25 +20,53 @@ async function loginRequest(login: ILogin) {
 }
 
 async function logoutRequest() {
-	const { data, status } = await axiosInstance({ url: '/v1/auth/logout' });
+	const { data, status } = await axiosInstance.get<string>('/v1/auth/logout');
 
 	if (status === 200) {
-		return null;
+		return;
 	}
+
 	console.error(data);
 }
 
-async function getUser(
-	email: string | null,
-	signal: AbortSignal,
-): Promise<UserResponse | null> {
-	if (!email) return null;
-	const { data } = await axiosInstance.get<UserResponse>(
-		`/v1/users/${email}`,
-		{ signal },
-	);
+// interface UpdateUserParams {
+// 	user: UpdateUserDto;
+// 	email: string;
+// }
 
+// async function updateUser({
+// 	user,
+// 	email,
+// }: UpdateUserParams): Promise<UserResponse> {
+// 	const { data } = await axiosInstance.patch<UserResponse>(
+// 		`/v1/users/${email}`,
+// 		user,
+// 	);
+// 	return data;
+// }
+
+async function updateSelf(user: UpdateUserDto): Promise<UserResponse> {
+	const { data } = await axiosInstance.patch<UserResponse>('/me', user);
 	return data;
+}
+
+async function getUser(signal: AbortSignal): Promise<UserResponse | null> {
+	try {
+		const { data, status } = await axiosInstance.get<UserResponse>(
+			'/v1/me',
+			{ signal },
+		);
+
+		if (status === 200) {
+			return data;
+		}
+	} catch (err) {
+		if (isAxiosError(err)) {
+			if (err.response.status === 401) return null;
+		}
+		console.error(err);
+		throw err;
+	}
 }
 
 export function useAuth() {
@@ -52,37 +77,63 @@ export function useAuth() {
 
 	const queryClient = useQueryClient();
 
-	const { data: user } = useQuery<UserResponse>(
-		[QueryKeys.User, email],
-		({ signal }) => getUser(email, signal),
-	);
+	const { data: user, isLoading: queryIsLoading } =
+		useQuery<UserResponse | null>(
+			[QueryKeys.User],
+			async ({ signal }) => getUser(signal),
+			{
+				enabled: !!email,
+			},
+		);
 
 	const loginMutation = useMutation(loginRequest, {
 		onSuccess: (data) => {
-			closeModal(ModalName.Login);
 			setEmail(data.email);
-			queryClient.invalidateQueries([QueryKeys.User]);
-			queryClient.setQueriesData([QueryKeys.User, data.email], data);
-			showNotification({
-				title: 'Logged In',
-				message: `Logged in as ${data.email}`,
-			});
+			return queryClient.invalidateQueries([QueryKeys.User]);
 		},
 	});
 
 	const logoutMutation = useMutation(logoutRequest, {
 		onSuccess: () => {
-			queryClient.invalidateQueries([QueryKeys.User, email]);
 			removeEmail();
-			showNotification({
-				title: 'Signed out!',
-				message: 'You have successfully logged out.',
-			});
+			return queryClient.invalidateQueries([QueryKeys.User]);
 		},
 	});
 
-	const doLogin = (login: ILogin) => loginMutation.mutate(login);
-	const doLogout = () => logoutMutation.mutate();
+	const updateSelfMutation = useMutation(updateSelf, {
+		onMutate: async (user) => {
+			const { password, ...rest } = user;
+			await queryClient.cancelQueries([QueryKeys.User]);
+			const previousUser = queryClient.getQueryData<UserResponse>([
+				QueryKeys.User,
+				email,
+			]);
+			const newUser = { ...previousUser, ...rest };
+			setEmail(newUser.email);
+			queryClient.setQueryData([QueryKeys.User], newUser);
+			return { previousUser };
+		},
+		onError: (_err, _updatedUser, context) => {
+			setEmail(context.previousUser.email);
+			queryClient.setQueryData([QueryKeys.User], context.previousUser);
+		},
+		onSettled: () => {
+			queryClient.invalidateQueries([QueryKeys.User]);
+		},
+	});
 
-	return { doLogin, doLogout, email, user };
+	const isLoading =
+		queryIsLoading ||
+		loginMutation.isLoading ||
+		logoutMutation.isLoading ||
+		updateSelfMutation.isLoading;
+
+	return {
+		email,
+		isLoading,
+		loginMutation,
+		logoutMutation,
+		updateSelfMutation,
+		user,
+	};
 }

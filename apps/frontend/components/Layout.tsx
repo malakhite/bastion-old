@@ -5,6 +5,29 @@ import { useRouter } from 'next/router';
 import { ReactNode } from 'react';
 import UserMenu from './UserMenu';
 
+interface MenuLinkProps {
+	href: string;
+	label: string;
+}
+
+function MenuLink({ href, label }: MenuLinkProps) {
+	return (
+		<Button
+			component={NextLink}
+			href={href}
+			sx={(theme) => ({
+				a: {
+					':hover': {
+						color: theme.fn.primaryColor()[9],
+					},
+				},
+			})}
+		>
+			{label}
+		</Button>
+	);
+}
+
 interface LayoutProps {
 	children: ReactNode;
 }
@@ -46,16 +69,9 @@ export default function Layout({ children }: LayoutProps) {
 						</Link>
 					)}
 					<Group>
-						<Button component={NextLink} href="/about">
-							About
-						</Button>
-						<Button component={NextLink} href="/posts">
-							Blog
-						</Button>
-						<Button component={NextLink} href="/projects">
-							Projects
-						</Button>
-
+						<MenuLink href="/about" label="About" />
+						<MenuLink href="/posts" label="Posts" />
+						<MenuLink href="/projects" label="Projects" />
 						<UserMenu />
 					</Group>
 				</Header>

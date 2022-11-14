@@ -36,6 +36,7 @@ async function bootstrap() {
 			resave: false,
 			saveUninitialized: false,
 			store: typeormStore,
+			unset: 'destroy',
 		}),
 	);
 	app.use(passport.initialize());

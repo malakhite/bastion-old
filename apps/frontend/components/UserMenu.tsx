@@ -1,16 +1,27 @@
-import { Avatar, Button, Group, Menu, Text } from '@mantine/core';
+import { Avatar, Button, Group, Loader, Menu, Text } from '@mantine/core';
 import { openContextModal } from '@mantine/modals';
 import { NextLink } from '@mantine/next';
-import { IconChevronDown } from '@tabler/icons';
+import {
+	IconChevronDown,
+	IconLogout,
+	IconSettings,
+	IconTool,
+} from '@tabler/icons';
+import { Role } from '../lib/api/users';
 import { ModalName } from '../lib/constants';
 import { useAuth } from '../lib/hooks/useAuth';
-import { useUser } from '../lib/hooks/useUser';
 
 export default function UserMenu() {
-	const { doLogout, email } = useAuth();
-	const { user } = useUser({ email });
+	const { isLoading, logoutMutation, user } = useAuth();
 
-	if (email && user) {
+	if (isLoading) {
+		return (
+			<Button variant="outline">
+				<Loader />
+			</Button>
+		);
+	}
+	if (user) {
 		return (
 			<Menu width={260} position="bottom-end" transition="pop-top-right">
 				<Menu.Target>
@@ -28,22 +39,43 @@ export default function UserMenu() {
 					</Button>
 				</Menu.Target>
 				<Menu.Dropdown>
-					<Menu.Item component={NextLink} href="/admin">
-						Admin
+					<Menu.Item
+						icon={<IconTool size={14} stroke={1.5} />}
+						component={NextLink}
+						href="/me"
+					>
+						Account Settings
 					</Menu.Item>
-					<Menu.Item onClick={doLogout}>Logout</Menu.Item>
+					{[Role.ADMIN, Role.OWNER].includes(user.role) && (
+						<Menu.Item
+							icon={<IconSettings size={14} stroke={1.5} />}
+							component={NextLink}
+							href="/admin"
+						>
+							Admin
+						</Menu.Item>
+					)}
+					<Menu.Item
+						icon={<IconLogout size={14} stroke={1.5} />}
+						onClick={() => logoutMutation.mutate()}
+					>
+						Logout
+					</Menu.Item>
 				</Menu.Dropdown>
 			</Menu>
 		);
-	} else {
-		return (
-			<Button
-				onClick={() =>
-					openContextModal({ modal: ModalName.Login, innerProps: {} })
-				}
-			>
-				Login
-			</Button>
-		);
 	}
+	return (
+		<Button
+			onClick={() =>
+				openContextModal({
+					title: 'Please enter your email and password',
+					modal: ModalName.Login,
+					innerProps: {},
+				})
+			}
+		>
+			Login
+		</Button>
+	);
 }
